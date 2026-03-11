@@ -1,1 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeriPura Brand Auditor</title>
+  <meta name="description" content="Static brand compliance checker for VeriPura websites, documents, decks, and metadata." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+  <style>
+    :root {
+      --navy: #0F2444;
+      --navy-mid: #1F3864;
+      --blue: #2E5FA3;
+      --blue-light: #4A80C4;
+      --sky: #D6E4F0;
+      --pale: #EBF3FA;
+      --cream: #F8F9FB;
+      --red: #C8504A;
+      --gold: #D4A847;
+      --white: #FFFFFF;
+      --ink: #1A2332;
+      --muted: #5A6878;
+      --border: #CBD8E8;
+      --radius: 12px;
+      --shadow: 0 10px 30px rgba(15,36,68,0.08);
+      --shadow-soft: 0 4px 16px rgba(15,36,68,0.06);
+      --max: 1400px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); }
+    body { font-family: "DM Sans", system-ui, sans-serif; line-height: 1.5; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .topbar { position: sticky; top: 0; z-index: 100; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); border-bottom: 1px solid rgba(214,228,240,0.18); box-shadow: 0 3px 18px rgba(0,0,0,0.10); }
+    .topbar-inner, .container { width: min(var(--max), calc(100% - 32px)); margin: 0 auto; }
+    .topbar-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 12px 0; }
+    .brand-block { display: flex; flex-direction: column; gap: 3px; }
+    .brand { font-family: "DM Serif Display", serif; font-size: 1.7rem; letter-spacing: 0.01em; line-height: 1; }
+    .brand .veri { color: var(--white); }
+    .brand .pura { color: var(--gold); }
+    .subbrand { font-family: "DM Mono", monospace; color: var(--sky); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; }
+    .top-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { appearance: none; border: 1px solid transparent; cursor: pointer; min-height: 42px; padding: 0 16px; border-radius: 10px; font: 700 0.82rem/1 "DM Sans", system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.06em; transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease, color 140ms ease, border-color 140ms ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--blue-light); outline-offset: 2px; }
+    .btn-primary { background: var(--gold); color: var(--navy); box-shadow: 0 6px 18px rgba(212,168,71,0.24); }
+    .btn-primary:hover { background: #ddb659; }
+    .btn-secondary { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.26); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.07); }
+    .btn-light { background: var(--white); color: var(--navy); border-color: var(--border); }
+    .btn-light:hover { background: var(--pale); }
+    .btn-danger { background: var(--red); color: var(--white); }
+    .hero { padding: 32px 0 18px; background: linear-gradient(180deg, rgba(15,36,68,0.04), rgba(15,36,68,0.00)); border-bottom: 1px solid var(--border); }
+    .hero-grid { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 18px; align-items: start; }
+    .eyebrow { font-family: "DM Mono", monospace; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.74rem; color: var(--blue); margin-bottom: 12px; }
+    h1 { margin: 0 0 12px; font-family: "DM Serif Display", serif; font-weight: 400; font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.02; color: var(--navy); }
+    .hero p { margin: 0; color: var(--muted); max-width: 72ch; font-size: 1rem; }
+    .hero-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-soft); }
+    .hero-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+    .metric { background: var(--pale); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+    .metric .label { font-family: "DM Mono", monospace; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-size: 0.72rem; }
+    .metric .value { font-family: "DM Serif Display", serif; color: var(--navy); font-size: 1.45rem; line-height: 1.1; margin-top: 6px; }
+    .main { padding: 24px 0 48px; }
+    .layout { display: grid; grid-template-columns: 420px 1fr; gap: 20px; align-items: start; }
+    .panel { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-soft); }
+    .panel-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
+    .panel-header h2 { margin: 0; font-family: "DM Serif Display", serif; font-weight: 400; color: var(--navy); font-size: 1.45rem; }
+    .panel-header p { margin: 8px 0 0; color: var(--muted); font-size: 0.95rem; }
+    .panel-body { padding: 18px 20px 20px; }
+    .input-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 8px; color: var(--ink); font-size: 0.92rem; font-weight: 700; }
+    .mono-label { font-family: "DM Mono", monospace; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+    input[type="text"], input[type="url"], input[type="file"], textarea, select { width: 100%; border: 1px solid var(--border); background: var(--white); color: var(--ink); border-radius: 10px; padding: 12px 14px; font: 400 0.95rem/1.45 "DM Sans", system-ui, sans-serif; }
+    textarea { min-height: 148px; resize: vertical; }
+    .field-note { margin-top: 6px; color: var(--muted); font-size: 0.85rem; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .switcher { display: inline-grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; background: var(--pale); border: 1px solid var(--border); border-radius: 12px; padding: 8px; }
+    .switcher button { border: 1px solid transparent; background: transparent; color: var(--navy); padding: 10px 10px; border-radius: 10px; font: 700 0.76rem/1.15 "DM Sans", system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; }
+    .switcher button.active { background: var(--white); border-color: var(--border); box-shadow: var(--shadow-soft); }
+    .stack { display: grid; gap: 16px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    .score-grid { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; }
+    .score-card { background: linear-gradient(135deg, var(--navy), var(--navy-mid)); color: var(--white); border-radius: var(--radius); padding: 20px; border: 1px solid rgba(214,228,240,0.15); box-shadow: var(--shadow); }
+    .score-card .label { font-family: "DM Mono", monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--sky); }
+    .score-card .score { font-family: "DM Serif Display", serif; font-size: 3.6rem; line-height: 0.95; margin: 10px 0; }
+    .grade-pill { display: inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.12); font-family: "DM Mono", monospace; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .results-stack { display: grid; gap: 16px; }
+    .result-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); overflow: hidden; }
+    .result-head { display: flex; justify-content: space-between; gap: 12px; align-items: start; padding: 16px 18px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #fff, #fbfdff); }
+    .result-head h3 { margin: 0; font-size: 1rem; color: var(--navy); }
+    .result-head p { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; }
+    .severity { min-width: fit-content; padding: 6px 10px; border-radius: 999px; font-family: "DM Mono", monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; border: 1px solid transparent; }
+    .sev-critical { background: rgba(200,80,74,0.1); color: var(--red); border-color: rgba(200,80,74,0.22); }
+    .sev-major { background: rgba(212,168,71,0.14); color: #8a691b; border-color: rgba(212,168,71,0.24); }
+    .sev-minor { background: rgba(46,95,163,0.1); color: var(--blue); border-color: rgba(46,95,163,0.18); }
+    .result-body { padding: 16px 18px 18px; }
+    .result-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 16px; }
+    .mini-title { font-family: "DM Mono", monospace; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+    .snippet { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--ink); font-size: 0.92rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+    mark.violation { background: rgba(200,80,74,0.18); color: #7a1812; padding: 0 2px; border-radius: 3px; box-decoration-break: clone; }
+    ul.clean { margin: 0; padding-left: 18px; }
+    ul.clean li { margin: 0 0 8px; }
+    .summary-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    .summary-table th, .summary-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    .summary-table th { color: var(--navy); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; font-family: "DM Mono", monospace; background: var(--pale); }
+    .empty-state { padding: 24px; border: 1px dashed var(--border); border-radius: var(--radius); color: var(--muted); background: linear-gradient(180deg, rgba(235,243,250,0.6), rgba(255,255,255,1)); }
+    .status-line { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: var(--muted); font-size: 0.9rem; }
+    .pulse { width: 10px; height: 10px; border-radius: 999px; background: var(--blue); box-shadow: 0 0 0 rgba(46,95,163,0.35); animation: pulse 2.2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(46,95,163,0.35); } 70% { box-shadow: 0 0 0 12px rgba(46,95,163,0); } 100% { box-shadow: 0 0 0 0 rgba(46,95,163,0); } }
+    .footer { padding: 24px 0 48px; color: var(--muted); }
+    .footer .mono-label { display: block; margin-bottom: 6px; }
+    .hidden { display: none !important; }
+    @media (max-width: 1120px) { .layout, .hero-grid, .score-grid, .result-grid { grid-template-columns: 1fr; } .hero-metrics { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+    @media (max-width: 760px) { .container, .topbar-inner { width: min(var(--max), calc(100% - 20px)); } .switcher { grid-template-columns: repeat(2,1fr); } .row, .hero-metrics { grid-template-columns: 1fr; } .topbar-inner { align-items: flex-start; } .top-actions { width: 100%; } .top-actions .btn { flex: 1 1 auto; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-block">
+        <div class="brand"><span class="veri">Veri</span><span class="pura">Pura</span></div>
+        <div class="subbrand">Brand Compliance Auditor</div>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-secondary" id="demoBtn">Load Demo</button>
+        <button class="btn btn-primary" id="analyzeTopBtn">Run Audit</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Operational Review Tool</div>
+        <h1>Check websites, documents, and decks against the VeriPura brand system.</h1>
+        <p>Upload files or audit a public website link. The tool scores compliance, highlights likely violations, and generates downloadable remediation reports in Markdown and Word-compatible format.</p>
+      </div>
+      <div class="hero-card">
+        <div class="mono-label">What this checks</div>
+        <div class="hero-metrics">
+          <div class="metric"><div class="label">Tone</div><div class="value">Voice</div></div>
+          <div class="metric"><div class="label">Visual</div><div class="value">Brand tokens</div></div>
+          <div class="metric"><div class="label">Metadata</div><div class="value">OG / SEO</div></div>
+        </div>
+        <div class="status-line"><span class="pulse"></span><span>Rule-based review using the standards defined in the VeriPura Brand Style Book.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="main">
+    <div class="container layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Audit Input</h2>
+          <p>Select an audit mode, then upload a file or submit a public URL.</p>
+        </div>
+        <div class="panel-body stack">
+          <div>
+            <div class="mono-label" style="margin-bottom:8px;">Audit Mode</div>
+            <div class="switcher" id="modeSwitcher">
+              <button data-mode="document" class="active">Document</button>
+              <button data-mode="website">Website</button>
+              <button data-mode="deck">Deck</button>
+              <button data-mode="metadata">Metadata</button>
+            </div>
+          </div>
+          <div id="fileFields">
+            <div class="input-group">
+              <label for="fileInput">Upload File</label>
+              <input id="fileInput" type="file" accept=".txt,.md,.html,.htm,.pdf,.docx" />
+              <div class="field-note">Accepted: TXT, MD, HTML, PDF, DOCX.</div>
+            </div>
+          </div>
+          <div id="urlFields" class="hidden">
+            <div class="input-group">
+              <label for="urlInput">Public Website URL</label>
+              <input id="urlInput" type="url" placeholder="https://example.com" />
+              <div class="field-note">The app attempts direct retrieval first, then proxy fallback for publicly accessible pages.</div>
+            </div>
+          </div>
+          <div id="manualFields">
+            <div class="input-group">
+              <label for="titleInput">Page or Document Title</label>
+              <input id="titleInput" type="text" placeholder="Optional title for the audit report" />
+            </div>
+            <div class="input-group">
+              <label for="textInput">Additional Text to Audit</label>
+              <textarea id="textInput" placeholder="Paste website copy, proposal text, deck copy, metadata, alt text, button labels, or supporting content here."></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-group">
+              <label for="docType">Output Context</label>
+              <select id="docType">
+                <option value="website">Website Page</option>
+                <option value="proposal">Proposal PDF</option>
+                <option value="one-pager">One-Pager</option>
+                <option value="deck">Investor Deck</option>
+                <option value="pilot">Pilot Programme Document</option>
+                <option value="partner">Partner Programme Sheet</option>
+                <option value="case-study">Case Study</option>
+                <option value="email">Email</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="strictness">Audit Strictness</label>
+              <select id="strictness">
+                <option value="standard">Standard</option>
+                <option value="tight" selected>Tight Standards</option>
+                <option value="investor">Investor-Facing</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" id="analyzeBtn">Run Audit</button>
+            <button class="btn btn-light" id="downloadMdBtn" disabled>Download MD</button>
+            <button class="btn btn-light" id="downloadDocBtn" disabled>Download Word</button>
+            <button class="btn btn-danger" id="clearBtn">Clear</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Audit Results</h2>
+          <p>Violations are grouped by severity and category, with suggested corrective language and formatting changes.</p>
+        </div>
+        <div class="panel-body" id="resultsPane">
+          <div class="empty-state">Upload a file, paste content, or enter a public website link, then run the audit. The tool will produce a compliance score, category table, highlighted violations, and downloadable remediation reports.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span class="mono-label">VeriPura Internal Tooling</span>
+      This auditor is designed for controlled brand review. Final publication decisions should still include human review for logo handling, imagery, contrast, and layout execution.
+    </div>
+  </footer>
+
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.js';
+    const BRAND = {
+      colors: { navy:'#0F2444', navyMid:'#1F3864', blue:'#2E5FA3', blueLight:'#4A80C4', sky:'#D6E4F0', pale:'#EBF3FA', cream:'#F8F9FB', red:'#C8504A', gold:'#D4A847', white:'#FFFFFF', ink:'#1A2332', muted:'#5A6878', border:'#CBD8E8' },
+      toneGood: ['compliance','verification','document','documentation','traceability','audit','audit trail','pre-shipment','shipment','risk','workflow','readiness','border','import','requirement','review','validate','customs','broker','corridor'],
+      toneBad: ['revolutionary','game-changing','frictionless','magical','viral','cutting-edge','disruptive','next-gen','hypergrowth','seamless','amazing','incredible','unstoppable','rocketship','blazing fast','wow'],
+      forbiddenTone: ['playful','fun','quirky','youthful','lifestyle','whimsical','flashy','noisy','casual','trendy'],
+      ctaWeak: ['get started','learn more now','join the revolution','unlock growth','see the magic','try it free','let\'s go','buy now'],
+      badVisualSignals: ['gradient(','box-shadow: 0 20px','glass','backdrop-filter','neon','bounce','spin','flash','rotate(']
+    };
+    const state = { mode:'document', sourceText:'', sourceName:'', sourceHtml:'', sourceMeta:{}, audit:null, markdownReport:'', wordReportHtml:'' };
+    const els = {
+      modeSwitcher: document.getElementById('modeSwitcher'), fileFields: document.getElementById('fileFields'), urlFields: document.getElementById('urlFields'),
+      fileInput: document.getElementById('fileInput'), urlInput: document.getElementById('urlInput'), titleInput: document.getElementById('titleInput'),
+      textInput: document.getElementById('textInput'), docType: document.getElementById('docType'), strictness: document.getElementById('strictness'),
+      resultsPane: document.getElementById('resultsPane'), analyzeBtn: document.getElementById('analyzeBtn'), analyzeTopBtn: document.getElementById('analyzeTopBtn'),
+      clearBtn: document.getElementById('clearBtn'), downloadMdBtn: document.getElementById('downloadMdBtn'), downloadDocBtn: document.getElementById('downloadDocBtn'), demoBtn: document.getElementById('demoBtn')
+    };
+    function escapeHtml(str=''){ return str.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function slugify(str='report'){ return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80) || 'report'; }
+    function setMode(mode){ state.mode=mode; [...els.modeSwitcher.querySelectorAll('button')].forEach(btn=>btn.classList.toggle('active', btn.dataset.mode===mode)); const showUrl = mode==='website'; els.urlFields.classList.toggle('hidden', !showUrl); els.fileFields.classList.toggle('hidden', showUrl); }
+    els.modeSwitcher.addEventListener('click', e=>{ const btn=e.target.closest('button[data-mode]'); if(!btn) return; setMode(btn.dataset.mode); });
+
+    async function readFile(file){
+      state.sourceName = file.name; const ext=(file.name.split('.').pop()||'').toLowerCase();
+      if(['txt','md','html','htm'].includes(ext)){ const text=await file.text(); state.sourceText=text; if(['html','htm'].includes(ext)) parseHtmlArtifacts(text); return; }
+      if(ext==='docx'){ const arrayBuffer=await file.arrayBuffer(); const result=await mammoth.extractRawText({ arrayBuffer }); state.sourceText=result.value || ''; return; }
+      if(ext==='pdf'){ const arrayBuffer=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({ data:arrayBuffer }).promise; let text=''; for(let i=1;i<=pdf.numPages;i++){ const page=await pdf.getPage(i); const content=await page.getTextContent(); text += content.items.map(item=>item.str).join(' ') + '\n\n'; } state.sourceText=text; return; }
+      throw new Error('Unsupported file type.');
+    }
+
+    async function fetchUrlSource(url){
+      const normalized = /^https?:\/\//i.test(url) ? url.trim() : 'https://' + url.trim();
+      state.sourceName = normalized; let html=''; let fromProxy=false;
+      try { const res=await fetch(normalized, { mode:'cors' }); if(!res.ok) throw new Error('Direct fetch failed'); html=await res.text(); }
+      catch(e){ fromProxy=true; const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(normalized)}`; const res=await fetch(proxyUrl); if(!res.ok) throw new Error('Could not fetch the URL directly or through proxy fallback.'); html=await res.text(); }
+      state.sourceHtml=html; state.sourceText=extractTextFromHtml(html); parseHtmlArtifacts(html); state.sourceMeta.fetchMode=fromProxy ? 'proxy-fallback' : 'direct-fetch';
+    }
+    function extractTextFromHtml(html){ const parser=new DOMParser(); const doc=parser.parseFromString(html,'text/html'); doc.querySelectorAll('script, style, noscript, svg').forEach(el=>el.remove()); return (doc.body?.innerText || '').replace(/\n{3,}/g,'\n\n').trim(); }
+    function parseHtmlArtifacts(html){
+      state.sourceHtml=html; const parser=new DOMParser(); const doc=parser.parseFromString(html,'text/html');
+      state.sourceMeta = {
+        ...state.sourceMeta,
+        title: doc.querySelector('title')?.textContent?.trim() || '',
+        description: doc.querySelector('meta[name="description"]')?.getAttribute('content') || '',
+        ogTitle: doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || '',
+        ogDescription: doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || '',
+        twitterCard: doc.querySelector('meta[name="twitter:card"]')?.getAttribute('content') || '',
+        altTexts: [...doc.querySelectorAll('img[alt]')].map(img => img.getAttribute('alt') || ''),
+        links: [...doc.querySelectorAll('a')].map(a => a.textContent.trim()).filter(Boolean),
+        buttons: [...doc.querySelectorAll('button, input[type="button"], input[type="submit"], a[role="button"]')].map(el => (el.value || el.textContent || '').trim()).filter(Boolean)
+      };
+      const styleText = [...doc.querySelectorAll('style')].map(s=>s.textContent||'').join('\n');
+      const styleAttrs = [...doc.querySelectorAll('[style]')].map(el=>el.getAttribute('style')||'').join('\n');
+      const compound = (html + '\n' + styleText + '\n' + styleAttrs).toLowerCase();
+      state.sourceMeta.fontMentions = compound;
+      state.sourceMeta.colorMentions = compound;
+    }
+
+    function containsAny(text, terms){ return terms.some(term => text.includes(term.toLowerCase())); }
+    function findContext(text, term, context=70){ const idx=text.toLowerCase().indexOf(term.toLowerCase()); if(idx===-1) return { found:false, snippet:'' }; const start=Math.max(0, idx-context); const end=Math.min(text.length, idx+term.length+context); return { found:true, snippet:text.slice(start,end).trim() }; }
+    function countUppercaseBlocks(text){ return (text.match(/\b[A-Z][A-Z\s\-\/]{4,}\b/g) || []).length; }
+    function hasReadableSentenceMix(text){ const sentences=text.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean); if(!sentences.length) return true; const avg=sentences.reduce((sum,s)=>sum+s.length,0)/sentences.length; return avg<180; }
+    function escapeRegex(str){ return str.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+    function highlightSnippet(snippet, matchText){ const safe=escapeHtml(snippet); if(!matchText) return safe; const escapedMatch=escapeHtml(matchText); const regex=new RegExp(escapeRegex(escapedMatch),'ig'); return safe.replace(regex,m=>`<mark class="violation">${m}</mark>`); }
+    function labelize(str){ return String(str).replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }
+    function severityByStrictness(base, strictness){ if(strictness==='investor' && base==='minor') return 'major'; if(strictness==='tight' && base==='minor') return 'major'; return base; }
+
+    function analyze(){
+      const manualText=(els.textInput.value||'').trim(); const combinedText=[state.sourceText, manualText].filter(Boolean).join('\n\n'); const normalized=combinedText.trim();
+      if(!normalized && state.mode!=='website') throw new Error('No content available to audit. Upload a file or paste text first.');
+      if(state.mode==='website' && !normalized && !state.sourceHtml) throw new Error('Enter a public website URL or paste website content first.');
+      const issues=[]; const categories={ tone:{max:20,score:20}, typography:{max:10,score:10}, color:{max:15,score:15}, metadata:{max:15,score:15}, cta:{max:10,score:10}, structure:{max:15,score:15}, accessibility:{max:15,score:15} };
+      const sourceTitle=els.titleInput.value.trim() || state.sourceMeta.title || state.sourceName || 'Untitled Audit'; const context=els.docType.value; const strictness=els.strictness.value;
+      const textLower=normalized.toLowerCase(); const htmlLower=(state.sourceHtml||'').toLowerCase(); const fontMentions=state.sourceMeta.fontMentions || ''; const colorMentions=state.sourceMeta.colorMentions || '';
+      function addIssue({ category, severity, title, explanation, suggestion, snippet, matchText, penalty=1 }){ issues.push({ category, severity, title, explanation, suggestion, snippet:snippet||'', matchText:matchText||'' }); categories[category].score=Math.max(0, categories[category].score-penalty); }
+
+      BRAND.toneBad.forEach(term=>{ const hit=findContext(normalized, term); if(hit.found){ addIssue({ category:'tone', severity:severityByStrictness('major', strictness), title:`Hype-coded language detected: “${term}”`, explanation:'VeriPura copy must remain calm, serious, and commercially credible. Hype-coded language weakens authority.', suggestion:'Replace with precise language such as “structured verification,” “pre-shipment review,” or “documentation control.”', snippet:hit.snippet, matchText:term, penalty:2 }); } });
+      if(!containsAny(textLower, BRAND.toneGood)){ addIssue({ category:'tone', severity:'major', title:'Low compliance-language density', explanation:'The content does not strongly signal compliance, verification, documentation, traceability, or shipment readiness.', suggestion:'Introduce precise language around verification, documentation review, auditability, shipment readiness, and border risk.', snippet:normalized.slice(0,240), penalty:3 }); }
+      BRAND.forbiddenTone.forEach(term=>{ const hit=findContext(normalized, term); if(hit.found){ addIssue({ category:'tone', severity:'major', title:`Off-brand personality cue detected: “${term}”`, explanation:'The VeriPura brand must not feel playful, noisy, whimsical, or lifestyle-oriented.', suggestion:'Reframe the line toward enterprise seriousness, operational control, and risk reduction.', snippet:hit.snippet, matchText:term, penalty:2 }); } });
+
+      if(state.mode==='website' || htmlLower){
+        const hasSerif=fontMentions.includes('dm serif display'); const hasSans=fontMentions.includes('dm sans'); const hasMono=fontMentions.includes('dm mono');
+        if(!hasSerif) addIssue({ category:'typography', severity:'major', title:'DM Serif Display not detected', explanation:'Serif-led headlines are part of the VeriPura system for authority and editorial contrast.', suggestion:'Use DM Serif Display for hero headlines, section headlines, and selected impact statements.', snippet:'Font inspection did not detect DM Serif Display.', penalty:3 });
+        if(!hasSans) addIssue({ category:'typography', severity:'critical', title:'DM Sans not detected', explanation:'DM Sans is the primary working typeface for body copy, UI, forms, and interface text.', suggestion:'Set body copy, navigation, labels, and UI text in DM Sans.', snippet:'Font inspection did not detect DM Sans.', penalty:4 });
+        if(!hasMono) addIssue({ category:'typography', severity:'minor', title:'DM Mono not detected', explanation:'The mono layer is part of the compliance and metadata signal system.', suggestion:'Use DM Mono for eyebrow labels, metadata, status language, and utility cues.', snippet:'Font inspection did not detect DM Mono.', penalty:2 });
+        const requiredColors=Object.values(BRAND.colors).map(c=>c.toLowerCase()); const detectedBrandColors=requiredColors.filter(c=>colorMentions.includes(c)).length;
+        if(detectedBrandColors<4) addIssue({ category:'color', severity:'major', title:'Weak adherence to approved brand palette', explanation:'The page does not appear to use the VeriPura core color system in a disciplined way.', suggestion:'Anchor trust-heavy areas in Navy, use Cream/Pale for document surfaces, reserve Gold for primary action, and use Border for structure.', snippet:'Fewer than four approved palette tokens were detected in the inspected source.', penalty:4 });
+        if(!colorMentions.includes(BRAND.colors.navy.toLowerCase())) addIssue({ category:'color', severity:'major', title:'Primary Navy anchor not detected', explanation:'Dark Navy is the core trust surface for navigation, title zones, and high-trust sections.', suggestion:'Use #0F2444 as the primary trust anchor for headers, covers, and key control surfaces.', snippet:'Navy (#0F2444) was not detected in the inspected source.', penalty:3 });
+        if(!colorMentions.includes(BRAND.colors.gold.toLowerCase())) addIssue({ category:'color', severity:'minor', title:'Gold accent not detected', explanation:'Gold is the disciplined action accent for primary CTAs and select premium emphasis.', suggestion:'Use #D4A847 for primary action or controlled emphasis. Do not use Gold as a dominant field color.', snippet:'Gold (#D4A847) was not detected in the inspected source.', penalty:2 });
+        BRAND.badVisualSignals.forEach(signal=>{ if(htmlLower.includes(signal.toLowerCase())) addIssue({ category:'structure', severity:'minor', title:`Potential off-brand visual signal detected: ${signal}`, explanation:'The VeriPura system avoids novelty visual effects, glass styling, theatrical motion, and decorative excess.', suggestion:'Remove the effect or reduce it to a restrained enterprise-grade treatment.', snippet:signal, penalty:1 }); });
+        if(!state.sourceMeta.title) addIssue({ category:'metadata', severity:'critical', title:'Missing page title', explanation:'The brand system requires a strong page-title structure for professional metadata posture.', suggestion:'Use a formula such as “Page Topic | VeriPura” or “Topic | VeriPura — Pre-Shipment Compliance Verification.”', snippet:'No <title> element was detected.', penalty:5 });
+        if(!state.sourceMeta.description) addIssue({ category:'metadata', severity:'major', title:'Missing meta description', explanation:'Meta descriptions should be compact, professional, and factual.', suggestion:'Add a concise description focused on verification, documentation control, shipment readiness, or risk reduction.', snippet:'No meta name="description" element was detected.', penalty:4 });
+        if(!state.sourceMeta.ogTitle || !state.sourceMeta.ogDescription) addIssue({ category:'metadata', severity:'major', title:'Incomplete Open Graph metadata', explanation:'VeriPura requires a mature metadata posture for social and preview integrity.', suggestion:'Add og:title and og:description with calm, executive-grade language.', snippet:`Detected og:title: ${state.sourceMeta.ogTitle || 'missing'} | og:description: ${state.sourceMeta.ogDescription || 'missing'}`, penalty:3 });
+        if(!state.sourceMeta.twitterCard) addIssue({ category:'metadata', severity:'minor', title:'Missing Twitter/X card declaration', explanation:'A large summary card approach is part of the brand’s metadata posture.', suggestion:'Add a twitter:card declaration, typically summary_large_image for executive-grade previews.', snippet:'No twitter:card meta tag was detected.', penalty:2 });
+        if((state.sourceMeta.altTexts || []).length===0) addIssue({ category:'accessibility', severity:'major', title:'No image alt text detected', explanation:'Alt text discipline is part of the brand’s metadata and accessibility posture.', suggestion:'Provide descriptive, factual alt text for images. Avoid vague or keyword-stuffed text.', snippet:'No img[alt] entries were detected.', penalty:3 });
+      }
+
+      const ctaTexts=[...(state.sourceMeta.buttons||[]), ...(state.sourceMeta.links||[]).filter(t=>t.length<=40)].map(t=>t.toLowerCase());
+      if(ctaTexts.length){ const badCtas=ctaTexts.filter(t=>BRAND.ctaWeak.some(term=>t.includes(term))); if(badCtas.length) addIssue({ category:'cta', severity:'major', title:'Weak or generic CTA language detected', explanation:'VeriPura CTAs should be specific, controlled, and operationally credible.', suggestion:'Use labels such as “Request a Pilot Review,” “Book a Verification Call,” or “Review the Programme.”', snippet:badCtas.slice(0,6).join(', '), penalty:4 }); }
+      else if(textLower){ const genericCtas=BRAND.ctaWeak.filter(t=>textLower.includes(t)); if(genericCtas.length) addIssue({ category:'cta', severity:'major', title:'Generic CTA language found in content', explanation:'Calls to action should not read like consumer SaaS marketing.', suggestion:'Rewrite CTA language to match VeriPura’s serious, verification-led posture.', snippet:genericCtas.join(', '), penalty:3 }); }
+      if(countUppercaseBlocks(normalized)>12) addIssue({ category:'structure', severity:'minor', title:'Excessive uppercase density', explanation:'Uppercase is appropriate for mono labels and compact cues, not for large reading blocks.', suggestion:'Reserve uppercase for eyebrows, metadata, and small utility labels.', snippet:'The content contains a high number of uppercase blocks.', penalty:2 });
+      if(['proposal','pilot','partner','one-pager','case-study'].includes(context) && !containsAny(textLower, ['scope','review','process','deliverable','document','compliance','verification','timeline'])) addIssue({ category:'structure', severity:'major', title:'Document lacks operational structure language', explanation:'Formal documents should read like controlled business instruments, not promotional copy.', suggestion:'Introduce sections or language around scope, process, verification, timeline, deliverables, and review logic.', snippet:normalized.slice(0,220), penalty:3 });
+      if(context==='deck' && !containsAny(textLower, ['problem','solution','market','risk','workflow','compliance','verification'])) addIssue({ category:'structure', severity:'major', title:'Deck structure lacks investor-grade framing cues', explanation:'Decks should clearly structure the problem, solution, risk posture, and operational logic.', suggestion:'Add disciplined section structure around problem, solution, process, risk, and commercial value.', snippet:normalized.slice(0,220), penalty:3 });
+      if(normalized.length<140) addIssue({ category:'structure', severity:'minor', title:'Insufficient content for a strong brand audit', explanation:'Very short inputs reduce the reliability of tone and structure scoring.', suggestion:'Provide more content, metadata, CTA labels, or source text for a fuller review.', snippet:normalized || 'No text extracted.', penalty:1 });
+      if(!hasReadableSentenceMix(normalized)) addIssue({ category:'accessibility', severity:'minor', title:'Readability pattern appears weak', explanation:'Brand outputs should remain clear, scannable, and legible in document and interface contexts.', suggestion:'Use shorter sentences, clearer subheads, and more structured copy blocks.', snippet:normalized.slice(0,240), penalty:2 });
+
+      const totalMax=Object.values(categories).reduce((sum,c)=>sum+c.max,0); const totalScore=Object.values(categories).reduce((sum,c)=>sum+c.score,0); const percentage=Math.round((totalScore/totalMax)*100); const grade=percentage>=90 ? 'Strong' : percentage>=75 ? 'Acceptable' : percentage>=60 ? 'Needs Revision' : 'Off Brand';
+      state.audit={ summary:{ title:sourceTitle, context, strictness, source:state.sourceName || 'Pasted content', percentage, grade, totalIssues:issues.length, categories }, issues, normalizedText:normalized };
+      state.markdownReport=buildMarkdownReport(state.audit); state.wordReportHtml=buildWordHtmlReport(state.audit); renderResults(state.audit); els.downloadMdBtn.disabled=false; els.downloadDocBtn.disabled=false;
+    }
+
+    function renderResults(audit){ const { summary, issues, normalizedText }=audit; const categoryRows=Object.entries(summary.categories).map(([key,item])=>`<tr><td>${labelize(key)}</td><td>${item.score} / ${item.max}</td><td>${Math.round((item.score/item.max)*100)}%</td></tr>`).join(''); const issuesHtml=issues.length ? issues.map(issue=>`<article class="result-card"><div class="result-head"><div><h3>${escapeHtml(issue.title)}</h3><p>${escapeHtml(issue.explanation)}</p></div><span class="severity sev-${issue.severity}">${escapeHtml(issue.severity)}</span></div><div class="result-body"><div class="result-grid"><div><div class="mini-title">Highlighted Violation</div><div class="snippet">${highlightSnippet(issue.snippet || normalizedText.slice(0,240), issue.matchText)}</div></div><div><div class="mini-title">Suggested Change</div><div class="snippet">${escapeHtml(issue.suggestion)}</div></div></div></div></article>`).join('') : '<div class="empty-state">No issues were detected by the current rule set. Review visual execution manually before publication.</div>';
+      els.resultsPane.innerHTML=`<div class="score-grid"><div class="score-card"><div class="label">Compliance Score</div><div class="score">${summary.percentage}</div><div class="grade-pill">${escapeHtml(summary.grade)}</div><div style="margin-top:14px; font-size:0.92rem; color: var(--sky);">${summary.totalIssues} issue${summary.totalIssues===1 ? '' : 's'} detected<br>Context: ${escapeHtml(labelize(summary.context))}<br>Source: ${escapeHtml(summary.source)}</div></div><div class="results-stack"><div class="result-card"><div class="result-head"><div><h3>Category Summary</h3><p>Weighted scoring across tone, typography, palette discipline, metadata, calls to action, document structure, and accessibility.</p></div></div><div class="result-body"><table class="summary-table"><thead><tr><th>Category</th><th>Score</th><th>Percent</th></tr></thead><tbody>${categoryRows}</tbody></table></div></div><div class="result-card"><div class="result-head"><div><h3>Audit Notes</h3><p>The tool highlights likely deviations from the VeriPura brand system. Visual items such as exact logo misuse, imagery style, and deep layout execution should still be confirmed manually.</p></div></div><div class="result-body"><ul class="clean"><li>Gold should remain a disciplined accent, not a dominant field color.</li><li>Serif headlines should create calm editorial authority.</li><li>DM Sans should carry the operational reading layer.</li><li>DM Mono should be reserved for metadata, status, and compliance cues.</li><li>Copy must stay clear, serious, and non-hype.</li></ul></div></div></div></div><div style="height:18px"></div><div class="results-stack">${issuesHtml}</div>`;
+    }
+
+    function buildMarkdownReport(audit){ const { summary, issues }=audit; const lines=[]; lines.push('# VeriPura Brand Audit Report','',`**Title:** ${summary.title}`,`**Context:** ${labelize(summary.context)}`,`**Strictness:** ${labelize(summary.strictness)}`,`**Source:** ${summary.source}`,`**Compliance Score:** ${summary.percentage}`,`**Grade:** ${summary.grade}`,`**Issues Detected:** ${summary.totalIssues}`,'','## Category Scores','','| Category | Score | Percent |','|---|---:|---:|'); Object.entries(summary.categories).forEach(([key,value])=>lines.push(`| ${labelize(key)} | ${value.score} / ${value.max} | ${Math.round((value.score/value.max)*100)}% |`)); lines.push('','## Violations and Suggested Changes',''); if(!issues.length) lines.push('No rule-based violations were detected by the current audit set.'); else issues.forEach((issue,i)=>{ lines.push(`### ${i+1}. ${issue.title}`,`- **Category:** ${labelize(issue.category)}`,`- **Severity:** ${labelize(issue.severity)}`,`- **Why this matters:** ${issue.explanation}`,`- **Suggested change:** ${issue.suggestion}`,`- **Snippet:** ${issue.snippet || 'N/A'}`,''); }); lines.push('## Manual Review Items','','- Confirm logo spacing, color handling, and minimum size.','- Confirm imagery style, portrait treatment, and social-preview composition.','- Confirm contrast on dark surfaces and light document fields.','- Confirm Gold is used as a controlled accent only.','- Confirm hierarchy uses DM Serif Display, DM Sans, and DM Mono correctly.'); return lines.join('\n'); }
+    function buildWordHtmlReport(audit){ const { summary, issues }=audit; const rows=Object.entries(summary.categories).map(([key,value])=>`<tr><td>${escapeHtml(labelize(key))}</td><td>${value.score} / ${value.max}</td><td>${Math.round((value.score/value.max)*100)}%</td></tr>`).join(''); const issueBlocks=issues.length ? issues.map((issue,i)=>`<h3>${i+1}. ${escapeHtml(issue.title)}</h3><p><strong>Category:</strong> ${escapeHtml(labelize(issue.category))}<br><strong>Severity:</strong> ${escapeHtml(labelize(issue.severity))}</p><p><strong>Why this matters:</strong> ${escapeHtml(issue.explanation)}</p><p><strong>Suggested change:</strong> ${escapeHtml(issue.suggestion)}</p><p><strong>Snippet:</strong><br>${escapeHtml(issue.snippet || 'N/A')}</p>`).join('') : '<p>No rule-based violations were detected by the current audit set.</p>'; return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VeriPura Brand Audit Report</title><style>body{font-family:Arial,sans-serif;color:#1A2332;margin:40px;line-height:1.45}h1,h2,h3{color:#0F2444}h1{font-size:26px}h2{font-size:18px;margin-top:28px}h3{font-size:15px;margin-top:20px}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #CBD8E8;padding:8px 10px;text-align:left}th{background:#EBF3FA}.small{color:#5A6878;font-size:12px}</style></head><body><h1>VeriPura Brand Audit Report</h1><p><strong>Title:</strong> ${escapeHtml(summary.title)}<br><strong>Context:</strong> ${escapeHtml(labelize(summary.context))}<br><strong>Strictness:</strong> ${escapeHtml(labelize(summary.strictness))}<br><strong>Source:</strong> ${escapeHtml(summary.source)}<br><strong>Compliance Score:</strong> ${summary.percentage}<br><strong>Grade:</strong> ${escapeHtml(summary.grade)}<br><strong>Issues Detected:</strong> ${summary.totalIssues}</p><h2>Category Scores</h2><table><thead><tr><th>Category</th><th>Score</th><th>Percent</th></tr></thead><tbody>${rows}</tbody></table><h2>Violations and Suggested Changes</h2>${issueBlocks}<h2>Manual Review Items</h2><ul><li>Confirm logo spacing, contrast, and approved color handling.</li><li>Confirm imagery and portrait direction are serious and enterprise-appropriate.</li><li>Confirm Gold remains an accent rather than a dominant field color.</li><li>Confirm type hierarchy follows serif headline, sans body, mono metadata logic.</li><li>Confirm metadata, social preview, and accessibility standards are complete.</li></ul><p class="small">Generated by the VeriPura Brand Auditor.</p></body></html>`; }
+    function downloadFile(content, filename, type){ const blob=new Blob([content], { type }); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+    function clearAll(){ state.sourceText=''; state.sourceName=''; state.sourceHtml=''; state.sourceMeta={}; state.audit=null; state.markdownReport=''; state.wordReportHtml=''; els.fileInput.value=''; els.urlInput.value=''; els.titleInput.value=''; els.textInput.value=''; els.downloadMdBtn.disabled=true; els.downloadDocBtn.disabled=true; els.resultsPane.innerHTML='<div class="empty-state">Upload a file, paste content, or enter a public website link, then run the audit. The tool will produce a compliance score, category table, highlighted violations, and downloadable remediation reports.</div>'; }
+    function loadDemo(){ clearAll(); setMode('website'); els.urlInput.value='https://example.com'; els.titleInput.value='Demo Audit'; els.textInput.value='Revolutionary food trade platform. Unlock amazing growth with our cutting-edge solution. Get started now. This playful experience makes compliance fun and seamless.\n\nButton labels: Get Started, Learn More Now.'; state.sourceHtml='<!doctype html><html><head><title>Revolutionary Platform</title><meta name="description" content="Amazing next-gen platform for growth." /><style>body{font-family:Arial}.hero{background:#ffffff}.btn{background:#ffcc00; box-shadow: 0 20px 50px rgba(0,0,0,.25)}</style></head><body><a href="#">Get Started</a><img src="hero.jpg"></body></html>'; state.sourceText=extractTextFromHtml(state.sourceHtml); parseHtmlArtifacts(state.sourceHtml); analyze(); }
+    async function runAudit(){ try { if(state.mode==='website' && els.urlInput.value.trim()) await fetchUrlSource(els.urlInput.value.trim()); else if(els.fileInput.files && els.fileInput.files[0]) await readFile(els.fileInput.files[0]); analyze(); } catch(err){ els.resultsPane.innerHTML=`<div class="empty-state"><strong>Audit could not run.</strong><br>${escapeHtml(err.message || 'Unknown error')}</div>`; } }
+    els.analyzeBtn.addEventListener('click', runAudit); els.analyzeTopBtn.addEventListener('click', runAudit); els.clearBtn.addEventListener('click', clearAll); els.demoBtn.addEventListener('click', loadDemo);
+    els.downloadMdBtn.addEventListener('click', ()=>{ if(!state.audit) return; const name=slugify(state.audit.summary.title || 'veripura-brand-audit'); downloadFile(state.markdownReport, `${name}.md`, 'text/markdown;charset=utf-8'); });
+    els.downloadDocBtn.addEventListener('click', ()=>{ if(!state.audit) return; const name=slugify(state.audit.summary.title || 'veripura-brand-audit'); downloadFile(state.wordReportHtml, `${name}.doc`, 'application/msword;charset=utf-8'); });
+    setMode('document');
+  </script>
+</body>
+</html>
 
