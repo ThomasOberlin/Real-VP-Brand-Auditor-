@@ -27,10 +27,11 @@
       --ink: #1A2332;
       --muted: #5A6878;
       --border: #CBD8E8;
+      --success: #1e7a4b;
       --radius: 12px;
       --shadow: 0 10px 30px rgba(15,36,68,0.08);
       --shadow-soft: 0 4px 16px rgba(15,36,68,0.06);
-      --max: 1440px;
+      --max: 1480px;
     }
 
     * { box-sizing: border-box; }
@@ -101,19 +102,26 @@
       outline: 2px solid var(--blue-light);
       outline-offset: 2px;
     }
+
     .btn-primary {
       background: var(--gold);
       color: var(--navy);
       box-shadow: 0 6px 18px rgba(212,168,71,0.24);
     }
     .btn-primary:hover { background: #ddb659; }
+
     .btn-light {
       background: var(--white);
       color: var(--navy);
       border-color: var(--border);
     }
     .btn-light:hover { background: var(--pale); }
-    .btn-danger { background: var(--red); color: var(--white); }
+
+    .btn-danger {
+      background: var(--red);
+      color: var(--white);
+    }
+
     .btn-quiet {
       background: var(--pale);
       color: var(--navy);
@@ -192,7 +200,7 @@
     .metric .value {
       font-family: "DM Serif Display", serif;
       color: var(--navy);
-      font-size: 1.45rem;
+      font-size: 1.25rem;
       line-height: 1.1;
       margin-top: 6px;
     }
@@ -225,7 +233,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 430px 1fr;
+      grid-template-columns: 440px 1fr;
       gap: 20px;
       align-items: start;
     }
@@ -338,11 +346,11 @@
 
     .status-banner.show { display: block; }
     .status-info { border-color: rgba(46,95,163,0.18); background: rgba(46,95,163,0.06); }
-    .status-success { border-color: rgba(46,95,163,0.18); background: rgba(46,95,163,0.06); }
+    .status-success { border-color: rgba(30,122,75,0.2); background: rgba(30,122,75,0.08); }
     .status-warning { border-color: rgba(212,168,71,0.24); background: rgba(212,168,71,0.10); }
     .status-error { border-color: rgba(200,80,74,0.22); background: rgba(200,80,74,0.08); }
 
-    .diagnostics, .input-summary, .filter-bar {
+    .diagnostics, .input-summary, .filter-bar, .explain-box {
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--white);
@@ -410,10 +418,7 @@
       transition: background-color 140ms ease, border-color 140ms ease;
     }
 
-    .filter-status:hover {
-      background: var(--pale);
-    }
-
+    .filter-status:hover { background: var(--pale); }
     .filter-status:focus-visible {
       outline: 2px solid var(--blue-light);
       outline-offset: 2px;
@@ -421,7 +426,7 @@
 
     .score-grid {
       display: grid;
-      grid-template-columns: 220px 1fr;
+      grid-template-columns: 280px 1fr;
       gap: 20px;
       align-items: start;
     }
@@ -447,7 +452,35 @@
       font-family: "DM Serif Display", serif;
       font-size: 3.6rem;
       line-height: 0.95;
-      margin: 10px 0;
+      margin: 10px 0 8px;
+    }
+
+    .score-mini-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .score-mini {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .score-mini .k {
+      display: block;
+      font-family: "DM Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--sky);
+      font-size: 0.68rem;
+      margin-bottom: 4px;
+    }
+
+    .score-mini .v {
+      font-size: 1.05rem;
+      font-weight: 700;
     }
 
     .grade-pill {
@@ -507,6 +540,7 @@
     .sev-critical { background: rgba(200,80,74,0.1); color: var(--red); border-color: rgba(200,80,74,0.22); }
     .sev-major { background: rgba(212,168,71,0.14); color: #8a691b; border-color: rgba(212,168,71,0.24); }
     .sev-minor { background: rgba(46,95,163,0.1); color: var(--blue); border-color: rgba(46,95,163,0.18); }
+    .sev-positive { background: rgba(30,122,75,0.08); color: var(--success); border-color: rgba(30,122,75,0.20); }
 
     .result-body { padding: 16px 18px 18px; }
 
@@ -539,6 +573,14 @@
     mark.violation {
       background: rgba(200,80,74,0.18);
       color: #7a1812;
+      padding: 0 2px;
+      border-radius: 3px;
+      box-decoration-break: clone;
+    }
+
+    mark.positive {
+      background: rgba(30,122,75,0.12);
+      color: #155c39;
       padding: 0 2px;
       border-radius: 3px;
       box-decoration-break: clone;
@@ -580,8 +622,10 @@
     .footer { padding: 24px 0 48px; color: var(--muted); }
     .footer .mono-label { display: block; margin-bottom: 6px; }
 
-    @media (max-width: 1120px) {
-      .layout, .hero-grid, .score-grid, .result-grid, .diag-grid, .summary-grid { grid-template-columns: 1fr; }
+    @media (max-width: 1140px) {
+      .layout, .hero-grid, .score-grid, .result-grid, .diag-grid, .summary-grid {
+        grid-template-columns: 1fr;
+      }
       .hero-metrics { grid-template-columns: repeat(3, minmax(0,1fr)); }
     }
 
@@ -613,16 +657,19 @@
       <div>
         <div class="eyebrow">Operational Review Tool</div>
         <h1>Check websites, documents, and decks against the VeriPura brand system.</h1>
-        <p>Upload files or audit a public website link. The tool scores compliance, highlights likely violations, and generates downloadable remediation reports in Markdown and Word-compatible format.</p>
+        <p>This version uses positive scoring, identity gating, and separate brand-match versus execution-quality scoring so generic enterprise content no longer passes as “VeriPura compliant.”</p>
       </div>
       <div class="hero-card">
-        <div class="mono-label">What this checks</div>
+        <div class="mono-label">What this checks now</div>
         <div class="hero-metrics">
-          <div class="metric"><div class="label">Tone</div><div class="value">Voice</div></div>
-          <div class="metric"><div class="label">Visual</div><div class="value">Brand tokens</div></div>
-          <div class="metric"><div class="label">Metadata</div><div class="value">OG / SEO</div></div>
+          <div class="metric"><div class="label">Identity</div><div class="value">Brand proof</div></div>
+          <div class="metric"><div class="label">System</div><div class="value">Fonts + palette + CTA</div></div>
+          <div class="metric"><div class="label">Quality</div><div class="value">Tone + technicals</div></div>
         </div>
-        <div class="status-line"><span class="pulse"></span><span>Rule-based review using the standards defined in the VeriPura Brand Style Book.</span></div>
+        <div class="status-line">
+          <span class="pulse"></span>
+          <span>Candidate pages are capped when they do not show real VeriPura identity.</span>
+        </div>
       </div>
     </div>
   </section>
@@ -645,6 +692,25 @@
             </div>
           </div>
 
+          <div class="row">
+            <div class="input-group">
+              <label for="reviewMode">Review Lens</label>
+              <select id="reviewMode">
+                <option value="candidate" selected>Candidate Content</option>
+                <option value="reference">Reference VeriPura Asset</option>
+              </select>
+              <div class="field-note">Use Candidate for outside material being tested against the brand. Use Reference for known VeriPura pages or assets.</div>
+            </div>
+            <div class="input-group">
+              <label for="strictness">Audit Strictness</label>
+              <select id="strictness">
+                <option value="standard">Standard</option>
+                <option value="tight" selected>Tight Standards</option>
+                <option value="investor">Investor-Facing</option>
+              </select>
+            </div>
+          </div>
+
           <div id="fileFields">
             <div class="input-group">
               <label for="fileInput">Upload File</label>
@@ -657,7 +723,7 @@
             <div class="input-group">
               <label for="urlInput">Public Website URL</label>
               <input id="urlInput" type="url" placeholder="https://example.com" />
-              <div class="field-note">The app attempts direct retrieval first, then proxy fallback for publicly accessible pages.</div>
+              <div class="field-note">The app attempts direct retrieval first, then proxy fallback for publicly accessible pages. Some websites will still return partial HTML because of browser restrictions.</div>
             </div>
           </div>
 
@@ -689,12 +755,8 @@
               </select>
             </div>
             <div class="input-group">
-              <label for="strictness">Audit Strictness</label>
-              <select id="strictness">
-                <option value="standard">Standard</option>
-                <option value="tight" selected>Tight Standards</option>
-                <option value="investor">Investor-Facing</option>
-              </select>
+              <label for="benchmark">Benchmark Notes</label>
+              <input id="benchmark" type="text" placeholder="Optional: e.g. compare to current VeriPura investor site tone" />
             </div>
           </div>
 
@@ -710,6 +772,16 @@
             </div>
           </div>
 
+          <div class="explain-box">
+            <div class="mono-label">How scoring now works</div>
+            <ul class="clean" style="margin-top:8px;">
+              <li><strong>Brand Match</strong> rewards actual VeriPura identity plus real system alignment.</li>
+              <li><strong>Execution Quality</strong> measures tone, structure, metadata, and accessibility.</li>
+              <li><strong>Candidate</strong> content is score-capped if identity proof is weak.</li>
+              <li><strong>Reference</strong> content is judged more lightly on optional technical metadata.</li>
+            </ul>
+          </div>
+
           <div class="actions">
             <button class="btn btn-primary" id="analyzeBtn" type="button">Run Audit</button>
             <button class="btn btn-light" id="downloadMdBtn" type="button" disabled>Download MD</button>
@@ -723,7 +795,7 @@
       <section class="panel">
         <div class="panel-header">
           <h2>Audit Results</h2>
-          <p>Violations are grouped by severity and category, with suggested corrective language and formatting changes.</p>
+          <p>The output now distinguishes between genuine VeriPura brand match and general execution quality.</p>
         </div>
         <div class="panel-body">
           <div class="input-summary" id="inputSummary">
@@ -733,6 +805,8 @@
               <div class="summary-item"><span class="summary-label">Source</span><span id="summarySource">None</span></div>
               <div class="summary-item"><span class="summary-label">Source Content</span><span id="summaryContext">Website Page</span></div>
               <div class="summary-item"><span class="summary-label">Strictness</span><span id="summaryStrictness">Tight Standards</span></div>
+              <div class="summary-item"><span class="summary-label">Review Lens</span><span id="summaryReviewMode">Candidate Content</span></div>
+              <div class="summary-item"><span class="summary-label">Benchmark</span><span id="summaryBenchmark">None</span></div>
             </div>
           </div>
 
@@ -744,14 +818,16 @@
             <button class="filter-chip" data-filter="critical" type="button">Critical</button>
             <button class="filter-chip" data-filter="major" type="button">Major</button>
             <button class="filter-chip" data-filter="minor" type="button">Minor</button>
+            <button class="filter-chip" data-filter="positive" type="button">Positive</button>
+            <button class="filter-chip" data-filter="identity" type="button">Identity</button>
+            <button class="filter-chip" data-filter="system" type="button">System</button>
             <button class="filter-chip" data-filter="tone" type="button">Tone</button>
-            <button class="filter-chip" data-filter="metadata" type="button">Metadata</button>
-            <button class="filter-chip" data-filter="cta" type="button">CTA</button>
+            <button class="filter-chip" data-filter="technical" type="button">Technical</button>
           </div>
 
           <div id="resultsPane">
             <div class="empty-state">
-              Upload a file, paste content, or enter a public website link, then run the audit. The tool will produce a compliance score, category table, highlighted violations, and downloadable remediation reports.
+              Upload a file, paste content, or enter a public website link, then run the audit. The tool will now produce a final score, Brand Match score, Execution Quality score, category table, positive proofs, violations, caps, and downloadable remediation reports.
             </div>
           </div>
         </div>
@@ -762,13 +838,13 @@
   <footer class="footer">
     <div class="container">
       <span class="mono-label">VeriPura Internal Tooling</span>
-      This auditor is designed for controlled brand review. Final publication decisions should still include human review for logo handling, imagery, contrast, and layout execution.
+      This auditor is designed for controlled brand review. Final publication decisions still require human review for layout fidelity, actual rendered styles, logo handling, imagery, and contrast.
     </div>
   </footer>
 
   <script>
     const PDFJS_WORKER = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.6.172/build/pdf.worker.min.js";
-    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v5";
+    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v6";
 
     function getPdfJs() {
       if (window.pdfjsLib) {
@@ -794,17 +870,69 @@
         muted: "#5A6878",
         border: "#CBD8E8"
       },
+      identity: {
+        brandNames: ["veripura", "veri pura"],
+        strongTerms: [
+          "pre-shipment compliance verification",
+          "shipment readiness",
+          "documentation control",
+          "document verification",
+          "traceability",
+          "corridor risk",
+          "border risk",
+          "pre-shipment review",
+          "compliance verification",
+          "shipment documentation"
+        ],
+        mediumTerms: [
+          "compliance",
+          "verification",
+          "document",
+          "documentation",
+          "audit trail",
+          "shipment",
+          "customs",
+          "broker",
+          "import",
+          "border",
+          "readiness",
+          "risk",
+          "traceability",
+          "review",
+          "validate"
+        ],
+        approvedCtas: [
+          "request a pilot review",
+          "book a verification call",
+          "review the programme",
+          "request a review",
+          "book a call",
+          "review the pilot",
+          "see the workflow",
+          "review the workflow",
+          "request verification"
+        ]
+      },
       toneGood: [
-        "compliance","verification","document","documentation","traceability","audit","audit trail","pre-shipment","shipment",
-        "risk","workflow","readiness","border","import","requirement","review","validate","customs","broker","corridor"
+        "compliance", "verification", "document", "documentation", "traceability", "audit", "audit trail",
+        "pre-shipment", "shipment", "risk", "workflow", "readiness", "border", "import", "requirement",
+        "review", "validate", "customs", "broker", "corridor", "control", "evidence", "operational"
       ],
       toneBad: [
-        "revolutionary","game-changing","frictionless","magical","viral","cutting-edge","disruptive","next-gen","hypergrowth",
-        "seamless","amazing","incredible","unstoppable","rocketship","blazing fast","wow"
+        "revolutionary", "game-changing", "frictionless", "magical", "viral", "cutting-edge",
+        "disruptive", "next-gen", "hypergrowth", "seamless", "amazing", "incredible",
+        "unstoppable", "rocketship", "blazing fast", "wow", "transform your business overnight"
       ],
-      forbiddenTone: ["playful","fun","quirky","youthful","lifestyle","whimsical","flashy","noisy","casual","trendy"],
-      ctaWeak: ["get started","learn more now","join the revolution","unlock growth","see the magic","try it free","let's go","buy now"],
-      badVisualSignals: ["gradient(","box-shadow: 0 20px","glass","backdrop-filter","neon","bounce","spin","flash","rotate("]
+      forbiddenTone: [
+        "playful", "fun", "quirky", "youthful", "lifestyle", "whimsical", "flashy", "noisy", "trendy"
+      ],
+      ctaWeak: [
+        "get started", "learn more now", "join the revolution", "unlock growth", "see the magic",
+        "try it free", "let's go", "buy now"
+      ],
+      badVisualSignals: [
+        "backdrop-filter", "neon", "bounce", "spin", "flash", "rotate(", "glass", "text-shadow"
+      ]
     };
 
     const state = {
@@ -822,6 +950,7 @@
 
     const els = {
       modeSwitcher: document.getElementById("modeSwitcher"),
+      reviewMode: document.getElementById("reviewMode"),
       fileFields: document.getElementById("fileFields"),
       urlFields: document.getElementById("urlFields"),
       fileInput: document.getElementById("fileInput"),
@@ -830,6 +959,7 @@
       textInput: document.getElementById("textInput"),
       docType: document.getElementById("docType"),
       strictness: document.getElementById("strictness"),
+      benchmark: document.getElementById("benchmark"),
       resultsPane: document.getElementById("resultsPane"),
       analyzeBtn: document.getElementById("analyzeBtn"),
       clearBtn: document.getElementById("clearBtn"),
@@ -843,6 +973,8 @@
       summarySource: document.getElementById("summarySource"),
       summaryContext: document.getElementById("summaryContext"),
       summaryStrictness: document.getElementById("summaryStrictness"),
+      summaryReviewMode: document.getElementById("summaryReviewMode"),
+      summaryBenchmark: document.getElementById("summaryBenchmark"),
       diagPdf: document.getElementById("diagPdf"),
       diagDocx: document.getElementById("diagDocx"),
       diagStorage: document.getElementById("diagStorage"),
@@ -861,7 +993,7 @@
     }
 
     function escapeHtml(str = "") {
-      return str
+      return String(str)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -870,7 +1002,7 @@
     }
 
     function slugify(str = "report") {
-      return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "report";
+      return String(str).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "report";
     }
 
     function labelize(str) {
@@ -878,19 +1010,28 @@
     }
 
     function escapeRegex(str) {
-      return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function normalizeWhitespace(str = "") {
+      return str.replace(/\s+/g, " ").trim();
     }
 
     function containsAny(text, terms) {
       return terms.some(term => text.includes(term.toLowerCase()));
     }
 
-    function findContext(text, term, context = 70) {
-      const idx = text.toLowerCase().indexOf(term.toLowerCase());
+    function countHits(text, terms) {
+      return terms.filter(term => text.includes(term.toLowerCase()));
+    }
+
+    function findContext(text, term, context = 90) {
+      const source = text || "";
+      const idx = source.toLowerCase().indexOf(term.toLowerCase());
       if (idx === -1) return { found: false, snippet: "" };
       const start = Math.max(0, idx - context);
-      const end = Math.min(text.length, idx + term.length + context);
-      return { found: true, snippet: text.slice(start, end).trim() };
+      const end = Math.min(source.length, idx + term.length + context);
+      return { found: true, snippet: source.slice(start, end).trim() };
     }
 
     function countUppercaseBlocks(text) {
@@ -904,18 +1045,23 @@
       return avg < 180;
     }
 
-    function highlightSnippet(snippet, matchText) {
+    function highlightSnippet(snippet, matchText, positive = false) {
       const safe = escapeHtml(snippet);
       if (!matchText) return safe;
       const escapedMatch = escapeHtml(matchText);
       const regex = new RegExp(escapeRegex(escapedMatch), "ig");
-      return safe.replace(regex, m => `<mark class="violation">${m}</mark>`);
+      const cls = positive ? "positive" : "violation";
+      return safe.replace(regex, m => `<mark class="${cls}">${m}</mark>`);
     }
 
     function severityByStrictness(base, strictness) {
       if (strictness === "investor" && base === "minor") return "major";
       if (strictness === "tight" && base === "minor") return "major";
       return base;
+    }
+
+    function clamp(num, min, max) {
+      return Math.max(min, Math.min(max, num));
     }
 
     function updateDiagnostics() {
@@ -936,6 +1082,8 @@
       els.summarySource.textContent = state.sourceName || "Manual / None";
       els.summaryContext.textContent = labelize(els.docType.value);
       els.summaryStrictness.textContent = labelize(els.strictness.value);
+      els.summaryReviewMode.textContent = labelize(els.reviewMode.value);
+      els.summaryBenchmark.textContent = els.benchmark.value.trim() || "None";
       updateDiagnostics();
     }
 
@@ -971,6 +1119,8 @@
         els.titleInput.value = "";
         els.textInput.value = "";
         els.urlInput.value = "";
+        els.benchmark.value = "";
+        els.reviewMode.value = "candidate";
       }
 
       [...els.filterBar.querySelectorAll(".filter-chip")].forEach(btn => {
@@ -983,7 +1133,7 @@
     function resetResultsPane() {
       els.resultsPane.innerHTML = `
         <div class="empty-state">
-          Upload a file, paste content, or enter a public website link, then run the audit. The tool will produce a compliance score, category table, highlighted violations, and downloadable remediation reports.
+          Upload a file, paste content, or enter a public website link, then run the audit. The tool will now produce a final score, Brand Match score, Execution Quality score, category table, positive proofs, violations, caps, and downloadable remediation reports.
         </div>
       `;
     }
@@ -999,9 +1149,7 @@
 
     async function readPdfFile(file) {
       const pdfjs = getPdfJs();
-      if (!pdfjs) {
-        throw new Error("PDF support failed to load. pdfjsLib is unavailable.");
-      }
+      if (!pdfjs) throw new Error("PDF support failed to load. pdfjsLib is unavailable.");
 
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
@@ -1016,9 +1164,7 @@
     }
 
     async function readDocxFile(file) {
-      if (!window.mammoth) {
-        throw new Error("DOCX support failed to load. Mammoth is unavailable.");
-      }
+      if (!window.mammoth) throw new Error("DOCX support failed to load. Mammoth is unavailable.");
       const arrayBuffer = await file.arrayBuffer();
       const result = await window.mammoth.extractRawText({ arrayBuffer });
       return (result.value || "").trim();
@@ -1098,13 +1244,19 @@
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
       doc.querySelectorAll("script, style, noscript, svg").forEach(el => el.remove());
-      return (doc.body?.innerText || "").replace(/\n{3,}/g, "\n\n").trim();
+      return normalizeWhitespace(doc.body?.innerText || "");
     }
 
     function parseHtmlArtifacts(html) {
       state.sourceHtml = html;
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
+
+      const styleText = [...doc.querySelectorAll("style")].map(s => s.textContent || "").join("\n");
+      const styleAttrs = [...doc.querySelectorAll("[style]")].map(el => el.getAttribute("style") || "").join("\n");
+      const linkHrefs = [...doc.querySelectorAll('link[rel="stylesheet"], link[href]')].map(l => l.getAttribute("href") || "");
+      const classes = [...doc.querySelectorAll("[class]")].map(el => el.getAttribute("class") || "").join(" ");
+      const allMarkup = `${html}\n${styleText}\n${styleAttrs}\n${linkHrefs.join("\n")}\n${classes}`.toLowerCase();
 
       state.sourceMeta = {
         ...state.sourceMeta,
@@ -1113,28 +1265,40 @@
         ogTitle: doc.querySelector('meta[property="og:title"]')?.getAttribute("content") || "",
         ogDescription: doc.querySelector('meta[property="og:description"]')?.getAttribute("content") || "",
         twitterCard: doc.querySelector('meta[name="twitter:card"]')?.getAttribute("content") || "",
-        altTexts: [...doc.querySelectorAll("img[alt]")].map(img => img.getAttribute("alt") || ""),
-        links: [...doc.querySelectorAll("a")].map(a => a.textContent.trim()).filter(Boolean),
+        altTexts: [...doc.querySelectorAll("img[alt]")].map(img => img.getAttribute("alt") || "").filter(Boolean),
+        imagesTotal: doc.querySelectorAll("img").length,
+        links: [...doc.querySelectorAll("a")].map(a => normalizeWhitespace(a.textContent || "")).filter(Boolean),
         buttons: [...doc.querySelectorAll('button, input[type="button"], input[type="submit"], a[role="button"]')]
-          .map(el => (el.value || el.textContent || "").trim())
-          .filter(Boolean)
+          .map(el => normalizeWhitespace(el.value || el.textContent || ""))
+          .filter(Boolean),
+        bodyClasses: doc.body?.getAttribute("class") || "",
+        headHtml: doc.head?.innerHTML || "",
+        rawStyleSignals: allMarkup,
+        textContent: normalizeWhitespace(doc.body?.innerText || "")
       };
-
-      const styleText = [...doc.querySelectorAll("style")].map(s => s.textContent || "").join("\n");
-      const styleAttrs = [...doc.querySelectorAll("[style]")].map(el => el.getAttribute("style") || "").join("\n");
-      const compound = (html + "\n" + styleText + "\n" + styleAttrs).toLowerCase();
-
-      state.sourceMeta.fontMentions = compound;
-      state.sourceMeta.colorMentions = compound;
     }
 
     function tryParseRawHtmlFromText(text) {
       const trimmed = (text || "").trim();
-      if (trimmed.startsWith("<!DOCTYPE html") || trimmed.startsWith("<html") || trimmed.includes("<head") || trimmed.includes("<meta")) {
-        try {
-          parseHtmlArtifacts(trimmed);
-        } catch {}
+      if (
+        trimmed.startsWith("<!DOCTYPE html") ||
+        trimmed.startsWith("<html") ||
+        trimmed.includes("<head") ||
+        trimmed.includes("<meta") ||
+        trimmed.includes("<body")
+      ) {
+        try { parseHtmlArtifacts(trimmed); } catch {}
       }
+    }
+
+    function buildCategoryModel() {
+      return {
+        identity: { max: 30, score: 0 },
+        system: { max: 25, score: 0 },
+        tone: { max: 20, score: 0 },
+        technical: { max: 15, score: 0 },
+        accessibility: { max: 10, score: 0 }
+      };
     }
 
     function analyze() {
@@ -1142,7 +1306,8 @@
       tryParseRawHtmlFromText(manualText);
 
       const combinedText = [state.sourceText, manualText].filter(Boolean).join("\n\n");
-      const normalized = combinedText.trim();
+      const normalized = normalizeWhitespace(combinedText);
+      const textLower = normalized.toLowerCase();
 
       if (!normalized && state.mode !== "website") {
         throw new Error("No content available to audit. Upload a file or paste text first.");
@@ -1152,27 +1317,41 @@
         throw new Error("Enter a public website URL or paste website content first.");
       }
 
-      const issues = [];
-      const categories = {
-        tone: { max: 20, score: 20 },
-        typography: { max: 10, score: 10 },
-        color: { max: 15, score: 15 },
-        metadata: { max: 15, score: 15 },
-        cta: { max: 10, score: 10 },
-        structure: { max: 15, score: 15 },
-        accessibility: { max: 15, score: 15 }
-      };
-
+      const reviewMode = els.reviewMode.value;
       const sourceTitle = els.titleInput.value.trim() || state.sourceMeta.title || state.sourceName || "Untitled Audit";
       const sourceContent = els.docType.value;
       const strictness = els.strictness.value;
-      const textLower = normalized.toLowerCase();
-      const htmlLower = (state.sourceHtml || "").toLowerCase();
-      const fontMentions = state.sourceMeta.fontMentions || "";
-      const colorMentions = state.sourceMeta.colorMentions || "";
 
-      function addIssue({ category, severity, title, explanation, suggestion, snippet, matchText, penalty = 1 }) {
-        issues.push({
+      const categories = buildCategoryModel();
+      const findings = [];
+      const positives = [];
+      const caps = [];
+      const warnings = [];
+
+      const htmlLower = (state.sourceHtml || "").toLowerCase();
+      const rawSignals = (state.sourceMeta.rawStyleSignals || "").toLowerCase();
+      const meta = state.sourceMeta || {};
+
+      function addPoints(category, points, payload = null) {
+        if (!categories[category]) return;
+        categories[category].score = clamp(categories[category].score + points, 0, categories[category].max);
+        if (payload) {
+          positives.push({
+            kind: "positive",
+            category,
+            severity: "positive",
+            title: payload.title,
+            explanation: payload.explanation,
+            suggestion: payload.suggestion || "No corrective action required.",
+            snippet: payload.snippet || "",
+            matchText: payload.matchText || ""
+          });
+        }
+      }
+
+      function addFinding({ category, severity, title, explanation, suggestion, snippet, matchText }) {
+        findings.push({
+          kind: "finding",
           category,
           severity,
           title,
@@ -1181,347 +1360,557 @@
           snippet: snippet || "",
           matchText: matchText || ""
         });
-        categories[category].score = Math.max(0, categories[category].score - penalty);
       }
 
-      BRAND.toneBad.forEach(term => {
-        const hit = findContext(normalized, term);
-        if (hit.found) {
-          addIssue({
-            category: "tone",
-            severity: severityByStrictness("major", strictness),
-            title: `Hype-coded language detected: “${term}”`,
-            explanation: "VeriPura copy must remain calm, serious, and commercially credible. Hype-coded language weakens authority.",
-            suggestion: "Replace with precise language such as “structured verification,” “pre-shipment review,” or “documentation control.”",
-            snippet: hit.snippet,
-            matchText: term,
-            penalty: 2
-          });
-        }
-      });
-
-      if (!containsAny(textLower, BRAND.toneGood)) {
-        addIssue({
-          category: "tone",
-          severity: "major",
-          title: "Low compliance-language density",
-          explanation: "The content does not strongly signal compliance, verification, documentation, traceability, or shipment readiness.",
-          suggestion: "Introduce precise language around verification, documentation review, auditability, shipment readiness, and border risk.",
-          snippet: normalized.slice(0, 240),
-          penalty: 3
-        });
+      function addCap(reason, limit) {
+        caps.push({ reason, limit });
       }
 
-      BRAND.forbiddenTone.forEach(term => {
-        const hit = findContext(normalized, term);
-        if (hit.found) {
-          addIssue({
-            category: "tone",
-            severity: "major",
-            title: `Off-brand personality cue detected: “${term}”`,
-            explanation: "The VeriPura brand must not feel playful, noisy, whimsical, or lifestyle-oriented.",
-            suggestion: "Reframe the line toward enterprise seriousness, operational control, and risk reduction.",
-            snippet: hit.snippet,
-            matchText: term,
-            penalty: 2
+      function addWarning(text) {
+        warnings.push(text);
+      }
+
+      function scoreIdentity() {
+        const brandHits = countHits(textLower, BRAND.identity.brandNames);
+        const strongHits = countHits(textLower, BRAND.identity.strongTerms);
+        const mediumHits = countHits(textLower, BRAND.identity.mediumTerms);
+
+        if (brandHits.length) {
+          addPoints("identity", 12, {
+            title: "VeriPura brand name detected",
+            explanation: "The source explicitly references VeriPura, which is a strong identity signal.",
+            snippet: findContext(normalized, brandHits[0]).snippet,
+            matchText: brandHits[0]
           });
-        }
-      });
-
-      if (state.mode === "website" || htmlLower) {
-        const hasSerif = fontMentions.includes("dm serif display");
-        const hasSans = fontMentions.includes("dm sans");
-        const hasMono = fontMentions.includes("dm mono");
-
-        if (!hasSerif) {
-          addIssue({
-            category: "typography",
-            severity: "major",
-            title: "DM Serif Display not detected",
-            explanation: "Serif-led headlines are part of the VeriPura system for authority and editorial contrast.",
-            suggestion: "Use DM Serif Display for hero headlines, section headlines, and selected impact statements.",
-            snippet: "Font inspection did not detect DM Serif Display.",
-            penalty: 3
-          });
-        }
-
-        if (!hasSans) {
-          addIssue({
-            category: "typography",
+        } else if (reviewMode === "candidate") {
+          addFinding({
+            category: "identity",
             severity: "critical",
+            title: "No explicit VeriPura brand name detected",
+            explanation: "Candidate material should not score highly as VeriPura-compliant if it never names VeriPura at all.",
+            suggestion: "Introduce VeriPura naming in the title, headline, navigation, footer, or core body copy where appropriate.",
+            snippet: normalized.slice(0, 220)
+          });
+        }
+
+        if (strongHits.length >= 3) {
+          addPoints("identity", 12, {
+            title: "Strong VeriPura positioning language detected",
+            explanation: "The material uses multiple high-signal phrases that align with VeriPura’s positioning.",
+            snippet: findContext(normalized, strongHits[0]).snippet,
+            matchText: strongHits[0]
+          });
+        } else if (strongHits.length >= 1) {
+          addPoints("identity", 7, {
+            title: "Some VeriPura positioning language detected",
+            explanation: "The material shows at least one strong positioning phrase associated with VeriPura.",
+            snippet: findContext(normalized, strongHits[0]).snippet,
+            matchText: strongHits[0]
+          });
+        } else {
+          addFinding({
+            category: "identity",
+            severity: reviewMode === "candidate" ? "major" : "minor",
+            title: "Strong VeriPura positioning language is weak or absent",
+            explanation: "The material does not show enough distinctive VeriPura language beyond generic compliance terminology.",
+            suggestion: "Use stronger brand-specific phrasing such as pre-shipment compliance verification, shipment readiness, documentation control, or corridor risk.",
+            snippet: normalized.slice(0, 220)
+          });
+        }
+
+        if (mediumHits.length >= 6) {
+          addPoints("identity", 6, {
+            title: "Relevant operational vocabulary is present",
+            explanation: "The copy uses multiple terms aligned with compliance, verification, shipment, or documentation workflows.",
+            snippet: findContext(normalized, mediumHits[0]).snippet,
+            matchText: mediumHits[0]
+          });
+        } else if (mediumHits.length >= 3) {
+          addPoints("identity", 3, {
+            title: "Some relevant operational vocabulary is present",
+            explanation: "The copy includes several relevant terms, though still not enough on its own to prove brand identity.",
+            snippet: findContext(normalized, mediumHits[0]).snippet,
+            matchText: mediumHits[0]
+          });
+        }
+
+        const approvedCtaHits = [...(meta.buttons || []), ...(meta.links || [])]
+          .map(t => t.toLowerCase())
+          .filter(t => BRAND.identity.approvedCtas.some(term => t.includes(term)));
+
+        if (approvedCtaHits.length) {
+          addPoints("identity", 4, {
+            title: "Approved CTA pattern detected",
+            explanation: "Specific, controlled CTA language aligns with VeriPura’s operational positioning.",
+            snippet: approvedCtaHits.slice(0, 3).join(", "),
+            matchText: approvedCtaHits[0]
+          });
+        }
+      }
+
+      function scoreSystem() {
+        const usesDmSans =
+          /font-family:[^;}{]*dm sans/.test(rawSignals) ||
+          rawSignals.includes("family=dm+sans") ||
+          rawSignals.includes("dm sans");
+
+        const usesDmSerif =
+          /font-family:[^;}{]*dm serif display/.test(rawSignals) ||
+          rawSignals.includes("family=dm+serif+display") ||
+          rawSignals.includes("dm serif display");
+
+        const usesDmMono =
+          /font-family:[^;}{]*dm mono/.test(rawSignals) ||
+          rawSignals.includes("family=dm+mono") ||
+          rawSignals.includes("dm mono");
+
+        if (usesDmSans) {
+          addPoints("system", 8, {
+            title: "DM Sans detected",
+            explanation: "DM Sans appears in the source and supports the working type system.",
+            snippet: "DM Sans detected in markup or style signals.",
+            matchText: "dm sans"
+          });
+        } else {
+          addFinding({
+            category: "system",
+            severity: "major",
             title: "DM Sans not detected",
-            explanation: "DM Sans is the primary working typeface for body copy, UI, forms, and interface text.",
-            suggestion: "Set body copy, navigation, labels, and UI text in DM Sans.",
-            snippet: "Font inspection did not detect DM Sans.",
-            penalty: 4
+            explanation: "DM Sans is the primary working typeface for body copy and interface text.",
+            suggestion: "Use DM Sans for body copy, labels, UI text, and controls.",
+            snippet: "DM Sans was not detected in the inspected source."
           });
         }
 
-        if (!hasMono) {
-          addIssue({
-            category: "typography",
-            severity: "minor",
-            title: "DM Mono not detected",
-            explanation: "The mono layer is part of the compliance and metadata signal system.",
-            suggestion: "Use DM Mono for eyebrow labels, metadata, status language, and utility cues.",
-            snippet: "Font inspection did not detect DM Mono.",
-            penalty: 2
+        if (usesDmSerif) {
+          addPoints("system", 7, {
+            title: "DM Serif Display detected",
+            explanation: "DM Serif Display supports VeriPura headline authority and editorial contrast.",
+            snippet: "DM Serif Display detected in markup or style signals.",
+            matchText: "dm serif display"
+          });
+        } else {
+          addFinding({
+            category: "system",
+            severity: reviewMode === "reference" ? "minor" : "major",
+            title: "DM Serif Display not detected",
+            explanation: "The serif display layer supports the intended VeriPura hierarchy for key headlines.",
+            suggestion: "Use DM Serif Display for hero headlines, section headlines, and selected emphasis statements.",
+            snippet: "DM Serif Display was not detected in the inspected source."
           });
         }
 
-        const requiredColors = Object.values(BRAND.colors).map(c => c.toLowerCase());
-        const detectedBrandColors = requiredColors.filter(c => colorMentions.includes(c)).length;
+        if (usesDmMono) {
+          addPoints("system", 2, {
+            title: "DM Mono detected",
+            explanation: "DM Mono reinforces metadata, eyebrow, and utility-label styling.",
+            snippet: "DM Mono detected in markup or style signals.",
+            matchText: "dm mono"
+          });
+        }
 
-        if (detectedBrandColors < 4) {
-          addIssue({
-            category: "color",
+        const paletteTokens = Object.values(BRAND.colors).map(c => c.toLowerCase());
+        const paletteHits = paletteTokens.filter(c => rawSignals.includes(c));
+
+        if (paletteHits.length >= 5) {
+          addPoints("system", 6, {
+            title: "Strong brand palette signal detected",
+            explanation: "Multiple approved palette tokens appear in the source.",
+            snippet: paletteHits.slice(0, 5).join(", "),
+            matchText: paletteHits[0]
+          });
+        } else if (paletteHits.length >= 3) {
+          addPoints("system", 3, {
+            title: "Some brand palette signal detected",
+            explanation: "Several approved palette tokens appear, though coverage is not strong.",
+            snippet: paletteHits.slice(0, 3).join(", "),
+            matchText: paletteHits[0]
+          });
+        } else {
+          addFinding({
+            category: "system",
+            severity: reviewMode === "candidate" ? "major" : "minor",
+            title: "Weak evidence of VeriPura palette discipline",
+            explanation: "The inspected source does not show strong evidence of the approved palette.",
+            suggestion: "Anchor trust areas in Navy, use Pale/Cream for surfaces, and reserve Gold for controlled emphasis.",
+            snippet: "Few approved palette tokens were detected in the inspected source."
+          });
+        }
+
+        if (rawSignals.includes(BRAND.colors.navy.toLowerCase())) {
+          addPoints("system", 2, {
+            title: "Primary Navy anchor detected",
+            explanation: "Navy is the core trust anchor in the VeriPura visual system.",
+            snippet: BRAND.colors.navy,
+            matchText: BRAND.colors.navy
+          });
+        }
+
+        const ctaTexts = [...(meta.buttons || []), ...(meta.links || []).filter(t => t.length <= 40)].map(t => t.toLowerCase());
+        const weakCtas = ctaTexts.filter(t => BRAND.ctaWeak.some(term => t.includes(term)));
+        const goodCtas = ctaTexts.filter(t => BRAND.identity.approvedCtas.some(term => t.includes(term)));
+
+        if (goodCtas.length) {
+          addPoints("system", 2, {
+            title: "Controlled CTA language detected",
+            explanation: "CTA language appears specific and operational rather than generic consumer SaaS language.",
+            snippet: goodCtas.slice(0, 3).join(", "),
+            matchText: goodCtas[0]
+          });
+        }
+
+        if (weakCtas.length) {
+          addFinding({
+            category: "system",
             severity: "major",
-            title: "Weak adherence to approved brand palette",
-            explanation: "The page does not appear to use the VeriPura core color system in a disciplined way.",
-            suggestion: "Anchor trust-heavy areas in Navy, use Cream/Pale for document surfaces, reserve Gold for primary action, and use Border for structure.",
-            snippet: "Fewer than four approved palette tokens were detected in the inspected source.",
-            penalty: 4
-          });
-        }
-
-        if (!colorMentions.includes(BRAND.colors.navy.toLowerCase())) {
-          addIssue({
-            category: "color",
-            severity: "major",
-            title: "Primary Navy anchor not detected",
-            explanation: "Dark Navy is the core trust surface for navigation, title zones, and high-trust sections.",
-            suggestion: "Use #0F2444 as the primary trust anchor for headers, covers, and key control surfaces.",
-            snippet: "Navy (#0F2444) was not detected in the inspected source.",
-            penalty: 3
-          });
-        }
-
-        if (!colorMentions.includes(BRAND.colors.gold.toLowerCase())) {
-          addIssue({
-            category: "color",
-            severity: "minor",
-            title: "Gold accent not detected",
-            explanation: "Gold is the disciplined action accent for primary CTAs and select premium emphasis.",
-            suggestion: "Use #D4A847 for primary action or controlled emphasis. Do not use Gold as a dominant field color.",
-            snippet: "Gold (#D4A847) was not detected in the inspected source.",
-            penalty: 2
+            title: "Weak or generic CTA language detected",
+            explanation: "VeriPura CTAs should be controlled, specific, and operationally credible.",
+            suggestion: "Use labels such as Request a Pilot Review, Book a Verification Call, or Review the Programme.",
+            snippet: weakCtas.slice(0, 6).join(", ")
           });
         }
 
         BRAND.badVisualSignals.forEach(signal => {
-          if (htmlLower.includes(signal.toLowerCase())) {
-            addIssue({
-              category: "structure",
+          if (rawSignals.includes(signal.toLowerCase())) {
+            addFinding({
+              category: "system",
               severity: "minor",
               title: `Potential off-brand visual signal detected: ${signal}`,
-              explanation: "The VeriPura system avoids novelty visual effects, glass styling, theatrical motion, and decorative excess.",
-              suggestion: "Remove the effect or reduce it to a restrained enterprise-grade treatment.",
-              snippet: signal,
-              penalty: 1
+              explanation: "The VeriPura system avoids novelty-heavy visual effects and decorative theatrics.",
+              suggestion: "Remove or reduce the effect to a restrained enterprise-grade treatment.",
+              snippet: signal
             });
           }
         });
+      }
 
-        if (!state.sourceMeta.title) {
-          addIssue({
-            category: "metadata",
-            severity: "critical",
-            title: "Missing page title",
-            explanation: "The brand system requires a strong page-title structure for professional metadata posture.",
-            suggestion: "Use a formula such as “Page Topic | VeriPura” or “Topic | VeriPura — Pre-Shipment Compliance Verification.”",
-            snippet: "No <title> element was detected.",
-            penalty: 5
+      function scoreTone() {
+        const badToneHits = countHits(textLower, BRAND.toneBad);
+        const forbiddenToneHits = countHits(textLower, BRAND.forbiddenTone);
+        const goodToneHits = countHits(textLower, BRAND.toneGood);
+
+        if (goodToneHits.length >= 8) {
+          addPoints("tone", 10, {
+            title: "Strong operational tone detected",
+            explanation: "The copy uses a strong mix of compliance, verification, documentation, and workflow language.",
+            snippet: findContext(normalized, goodToneHits[0]).snippet,
+            matchText: goodToneHits[0]
           });
-        }
-
-        if (!state.sourceMeta.description) {
-          addIssue({
-            category: "metadata",
+        } else if (goodToneHits.length >= 4) {
+          addPoints("tone", 6, {
+            title: "Reasonable operational tone detected",
+            explanation: "The copy shows several terms consistent with serious B2B compliance language.",
+            snippet: findContext(normalized, goodToneHits[0]).snippet,
+            matchText: goodToneHits[0]
+          });
+        } else if (normalized.length > 120) {
+          addFinding({
+            category: "tone",
             severity: "major",
-            title: "Missing meta description",
-            explanation: "Meta descriptions should be compact, professional, and factual.",
-            suggestion: "Add a concise description focused on verification, documentation control, shipment readiness, or risk reduction.",
-            snippet: 'No meta name="description" element was detected.',
-            penalty: 4
+            title: "Operational tone is too weak",
+            explanation: "The copy does not strongly project verification, documentation control, shipment readiness, or risk discipline.",
+            suggestion: "Use more exact language around verification, review, documents, workflows, border risk, and shipment readiness.",
+            snippet: normalized.slice(0, 240)
           });
         }
 
-        if (!state.sourceMeta.ogTitle || !state.sourceMeta.ogDescription) {
-          addIssue({
-            category: "metadata",
+        badToneHits.forEach(term => {
+          addFinding({
+            category: "tone",
+            severity: severityByStrictness("major", strictness),
+            title: `Hype-coded language detected: “${term}”`,
+            explanation: "VeriPura copy must remain calm, serious, and commercially credible.",
+            suggestion: "Replace hype with precise, operational language.",
+            snippet: findContext(normalized, term).snippet,
+            matchText: term
+          });
+        });
+
+        forbiddenToneHits.forEach(term => {
+          addFinding({
+            category: "tone",
             severity: "major",
-            title: "Incomplete Open Graph metadata",
-            explanation: "VeriPura requires a mature metadata posture for social and preview integrity.",
-            suggestion: "Add og:title and og:description with calm, executive-grade language.",
-            snippet: `Detected og:title: ${state.sourceMeta.ogTitle || "missing"} | og:description: ${state.sourceMeta.ogDescription || "missing"}`,
-            penalty: 3
+            title: `Off-brand personality cue detected: “${term}”`,
+            explanation: "The VeriPura brand should not feel playful, whimsical, flashy, or lifestyle-oriented.",
+            suggestion: "Reframe the line toward enterprise seriousness, process discipline, and risk reduction.",
+            snippet: findContext(normalized, term).snippet,
+            matchText: term
+          });
+        });
+
+        if (badToneHits.length === 0 && forbiddenToneHits.length === 0 && normalized.length > 180) {
+          addPoints("tone", 6, {
+            title: "No obvious hype or off-brand personality language detected",
+            explanation: "The copy avoids obvious consumer-style hype or playful brand cues.",
+            snippet: normalized.slice(0, 200)
           });
         }
 
-        if (!state.sourceMeta.twitterCard) {
-          addIssue({
-            category: "metadata",
+        if (countUppercaseBlocks(normalized) > 12) {
+          addFinding({
+            category: "tone",
             severity: "minor",
-            title: "Missing Twitter/X card declaration",
-            explanation: "A large summary card approach is part of the brand’s metadata posture.",
-            suggestion: "Add a twitter:card declaration, typically summary_large_image for executive-grade previews.",
-            snippet: "No twitter:card meta tag was detected.",
-            penalty: 2
+            title: "Excessive uppercase density",
+            explanation: "Uppercase is appropriate for compact utility labels, not large reading blocks.",
+            suggestion: "Reduce uppercase usage outside of metadata, eyebrow labels, or compact UI cues.",
+            snippet: "The content contains a high number of uppercase blocks."
           });
         }
 
-        if ((state.sourceMeta.altTexts || []).length === 0) {
-          addIssue({
-            category: "accessibility",
-            severity: "major",
-            title: "No image alt text detected",
-            explanation: "Alt text discipline is part of the brand’s metadata and accessibility posture.",
-            suggestion: "Provide descriptive, factual alt text for images. Avoid vague or keyword-stuffed text.",
-            snippet: "No img[alt] entries were detected.",
-            penalty: 3
-          });
-        }
-      }
-
-      const ctaTexts = [
-        ...(state.sourceMeta.buttons || []),
-        ...(state.sourceMeta.links || []).filter(t => t.length <= 40)
-      ].map(t => t.toLowerCase());
-
-      if (ctaTexts.length) {
-        const badCtas = ctaTexts.filter(t => BRAND.ctaWeak.some(term => t.includes(term)));
-        if (badCtas.length) {
-          addIssue({
-            category: "cta",
-            severity: "major",
-            title: "Weak or generic CTA language detected",
-            explanation: "VeriPura CTAs should be specific, controlled, and operationally credible.",
-            suggestion: "Use labels such as “Request a Pilot Review,” “Book a Verification Call,” or “Review the Programme.”",
-            snippet: badCtas.slice(0, 6).join(", "),
-            penalty: 4
-          });
-        }
-      } else if (textLower) {
-        const genericCtas = BRAND.ctaWeak.filter(t => textLower.includes(t));
-        if (genericCtas.length) {
-          addIssue({
-            category: "cta",
-            severity: "major",
-            title: "Generic CTA language found in content",
-            explanation: "Calls to action should not read like consumer SaaS marketing.",
-            suggestion: "Rewrite CTA language to match VeriPura’s serious, verification-led posture.",
-            snippet: genericCtas.join(", "),
-            penalty: 3
-          });
-        }
-      }
-
-      if (countUppercaseBlocks(normalized) > 12) {
-        addIssue({
-          category: "structure",
-          severity: "minor",
-          title: "Excessive uppercase density",
-          explanation: "Uppercase is appropriate for mono labels and compact cues, not for large reading blocks.",
-          suggestion: "Reserve uppercase for eyebrows, metadata, and small utility labels.",
-          snippet: "The content contains a high number of uppercase blocks.",
-          penalty: 2
-        });
-      }
-
-      if (["proposal", "pilot", "partner", "one-pager", "case-study"].includes(sourceContent)
-        && !containsAny(textLower, ["scope", "review", "process", "deliverable", "document", "compliance", "verification", "timeline"])) {
-        addIssue({
-          category: "structure",
-          severity: "major",
-          title: "Document lacks operational structure language",
-          explanation: "Formal documents should read like controlled business instruments, not promotional copy.",
-          suggestion: "Introduce sections or language around scope, process, verification, timeline, deliverables, and review logic.",
-          snippet: normalized.slice(0, 220),
-          penalty: 3
-        });
-      }
-
-      if (sourceContent === "deck"
-        && !containsAny(textLower, ["problem", "solution", "market", "risk", "workflow", "compliance", "verification"])) {
-        addIssue({
-          category: "structure",
-          severity: "major",
-          title: "Deck structure lacks investor-grade framing cues",
-          explanation: "Decks should clearly structure the problem, solution, risk posture, and operational logic.",
-          suggestion: "Add disciplined section structure around problem, solution, process, risk, and commercial value.",
-          snippet: normalized.slice(0, 220),
-          penalty: 3
-        });
-      }
-
-      if (sourceContent === "case-study"
-        && !containsAny(textLower, ["challenge", "approach", "outcome", "result", "context"])) {
-        addIssue({
-          category: "structure",
-          severity: "major",
-          title: "Case study structure appears weak",
-          explanation: "Case studies should read like evidence-led material rather than generic promotion.",
-          suggestion: "Introduce a challenge, approach, and outcome structure.",
-          snippet: normalized.slice(0, 220),
-          penalty: 3
-        });
-      }
-
-      if (sourceContent === "social") {
-        if (normalized.length > 2200) {
-          addIssue({
-            category: "structure",
+        if (sourceContent === "social" && normalized.length > 2200) {
+          addFinding({
+            category: "tone",
             severity: "minor",
             title: "Social Media Post appears overly long",
-            explanation: "Social posts should be compact, high-signal, and tightly edited.",
+            explanation: "Social posts should stay compact and high-signal.",
             suggestion: "Tighten the copy and reduce unnecessary framing language.",
-            snippet: normalized.slice(0, 220),
-            penalty: 2
+            snippet: normalized.slice(0, 240)
           });
         }
       }
 
-      if (normalized.length < 140) {
-        addIssue({
-          category: "structure",
-          severity: "minor",
-          title: "Insufficient content for a strong brand audit",
-          explanation: "Very short inputs reduce the reliability of tone and structure scoring.",
-          suggestion: "Provide more content, metadata, CTA labels, or source text for a fuller review.",
-          snippet: normalized || "No text extracted.",
-          penalty: 1
-        });
+      function scoreTechnical() {
+        if (meta.title) {
+          addPoints("technical", 4, {
+            title: "Page title detected",
+            explanation: "A defined page title supports professional metadata posture.",
+            snippet: meta.title,
+            matchText: meta.title
+          });
+        } else {
+          addFinding({
+            category: "technical",
+            severity: reviewMode === "reference" ? "minor" : "major",
+            title: "Missing page title",
+            explanation: "A strong title improves metadata posture and auditability.",
+            suggestion: "Use a title such as Topic | VeriPura.",
+            snippet: "No <title> element was detected."
+          });
+        }
+
+        if (meta.description) {
+          addPoints("technical", 3, {
+            title: "Meta description detected",
+            explanation: "A meta description is present.",
+            snippet: meta.description,
+            matchText: meta.description
+          });
+        } else {
+          addFinding({
+            category: "technical",
+            severity: "minor",
+            title: "Missing meta description",
+            explanation: "A description helps executive previews and search snippets.",
+            suggestion: "Add a concise description focused on verification, documents, readiness, or risk.",
+            snippet: 'No meta name="description" element was detected.'
+          });
+        }
+
+        if (meta.ogTitle || meta.ogDescription) {
+          addPoints("technical", 3, {
+            title: "Open Graph metadata partially or fully present",
+            explanation: "Some social preview metadata is present.",
+            snippet: `og:title: ${meta.ogTitle || "missing"} | og:description: ${meta.ogDescription || "missing"}`
+          });
+        } else {
+          addFinding({
+            category: "technical",
+            severity: "minor",
+            title: "Open Graph metadata not detected",
+            explanation: "This affects social preview maturity, but should not dominate the brand score.",
+            suggestion: "Add og:title and og:description where applicable.",
+            snippet: "No og:title or og:description meta tags were detected."
+          });
+        }
+
+        if (meta.twitterCard) {
+          addPoints("technical", 1, {
+            title: "Twitter/X card declaration detected",
+            explanation: "A Twitter/X card declaration is present.",
+            snippet: meta.twitterCard,
+            matchText: meta.twitterCard
+          });
+        }
+
+        if (["proposal", "pilot", "partner", "one-pager", "case-study"].includes(sourceContent)
+          && containsAny(textLower, ["scope", "review", "process", "deliverable", "timeline", "verification"])) {
+          addPoints("technical", 2, {
+            title: "Operational document structure language detected",
+            explanation: "The document includes structure cues appropriate for controlled business material.",
+            snippet: normalized.slice(0, 220)
+          });
+        } else if (["proposal", "pilot", "partner", "one-pager", "case-study"].includes(sourceContent)) {
+          addFinding({
+            category: "technical",
+            severity: "minor",
+            title: "Document structure language appears light",
+            explanation: "Formal material should show process, scope, review, deliverables, or timeline framing.",
+            suggestion: "Add structure around scope, process, verification, deliverables, or timeline.",
+            snippet: normalized.slice(0, 220)
+          });
+        }
+
+        if (sourceContent === "deck"
+          && containsAny(textLower, ["problem", "solution", "market", "risk", "workflow", "compliance", "verification"])) {
+          addPoints("technical", 2, {
+            title: "Investor deck framing cues detected",
+            explanation: "The deck appears to include problem/solution/risk or workflow-oriented framing.",
+            snippet: normalized.slice(0, 220)
+          });
+        } else if (sourceContent === "deck") {
+          addFinding({
+            category: "technical",
+            severity: "minor",
+            title: "Deck structure lacks clear framing cues",
+            explanation: "Decks should clearly structure the problem, solution, risk posture, or operational logic.",
+            suggestion: "Add disciplined section framing around problem, solution, risk, workflow, and value.",
+            snippet: normalized.slice(0, 220)
+          });
+        }
       }
 
-      if (!hasReadableSentenceMix(normalized)) {
-        addIssue({
-          category: "accessibility",
-          severity: "minor",
-          title: "Readability pattern appears weak",
-          explanation: "Brand outputs should remain clear, scannable, and legible in document and interface contexts.",
-          suggestion: "Use shorter sentences, clearer subheads, and more structured copy blocks.",
-          snippet: normalized.slice(0, 240),
-          penalty: 2
-        });
+      function scoreAccessibility() {
+        if (meta.imagesTotal > 0 && meta.altTexts.length > 0) {
+          addPoints("accessibility", 5, {
+            title: "Image alt text detected",
+            explanation: "At least some images include alt text.",
+            snippet: meta.altTexts.slice(0, 3).join(" | "),
+            matchText: meta.altTexts[0]
+          });
+        } else if (meta.imagesTotal > 0) {
+          addFinding({
+            category: "accessibility",
+            severity: "minor",
+            title: "Images detected without clear alt text evidence",
+            explanation: "Alt text matters for accessibility and metadata completeness, but should not dominate overall brand scoring.",
+            suggestion: "Provide concise, factual alt text for images.",
+            snippet: `Images detected: ${meta.imagesTotal} | Alt texts detected: ${meta.altTexts.length}`
+          });
+        } else {
+          addPoints("accessibility", 2, {
+            title: "No image accessibility issue detected from source",
+            explanation: "No images were detected, so there is no obvious missing-alt issue in the inspected source.",
+            snippet: "No images detected."
+          });
+        }
+
+        if (hasReadableSentenceMix(normalized)) {
+          addPoints("accessibility", 3, {
+            title: "Readable sentence pattern detected",
+            explanation: "The copy is not excessively dense at the sentence level.",
+            snippet: normalized.slice(0, 220)
+          });
+        } else {
+          addFinding({
+            category: "accessibility",
+            severity: "minor",
+            title: "Readability pattern appears weak",
+            explanation: "Brand outputs should remain clear and scannable.",
+            suggestion: "Use shorter sentences, clearer subheads, and more structured blocks of copy.",
+            snippet: normalized.slice(0, 240)
+          });
+        }
+
+        if (normalized.length >= 140) {
+          addPoints("accessibility", 2, {
+            title: "Input length is sufficient for a meaningful audit",
+            explanation: "The input is long enough to support a more reliable reading.",
+            snippet: `Character count: ${normalized.length}`
+          });
+        } else {
+          addFinding({
+            category: "accessibility",
+            severity: "minor",
+            title: "Insufficient content for a strong brand audit",
+            explanation: "Very short inputs reduce the reliability of identity and tone scoring.",
+            suggestion: "Provide more text, metadata, CTA labels, or source content.",
+            snippet: normalized || "No text extracted."
+          });
+        }
       }
 
-      const totalMax = Object.values(categories).reduce((sum, c) => sum + c.max, 0);
-      const totalScore = Object.values(categories).reduce((sum, c) => sum + c.score, 0);
-      const percentage = Math.round((totalScore / totalMax) * 100);
-      const grade = percentage >= 90 ? "Strong" : percentage >= 75 ? "Acceptable" : percentage >= 60 ? "Needs Revision" : "Off Brand";
+      scoreIdentity();
+      scoreSystem();
+      scoreTone();
+      scoreTechnical();
+      scoreAccessibility();
+
+      const identityPct = Math.round((categories.identity.score / categories.identity.max) * 100);
+      const systemPct = Math.round((categories.system.score / categories.system.max) * 100);
+      const tonePct = Math.round((categories.tone.score / categories.tone.max) * 100);
+      const technicalPct = Math.round((categories.technical.score / categories.technical.max) * 100);
+      const accessibilityPct = Math.round((categories.accessibility.score / categories.accessibility.max) * 100);
+
+      const brandMatch = Math.round(
+        ((categories.identity.score + categories.system.score) /
+          (categories.identity.max + categories.system.max)) * 100
+      );
+
+      const executionQuality = Math.round(
+        ((categories.tone.score + categories.technical.score + categories.accessibility.score) /
+          (categories.tone.max + categories.technical.max + categories.accessibility.max)) * 100
+      );
+
+      let finalScore = Math.round(brandMatch * 0.65 + executionQuality * 0.35);
+
+      if (reviewMode === "candidate") {
+        if (identityPct < 20) addCap("Very weak VeriPura identity proof", 55);
+        else if (identityPct < 40) addCap("Weak VeriPura identity proof", 70);
+        else if (identityPct < 60) addCap("Moderate but incomplete VeriPura identity proof", 82);
+      } else {
+        if (identityPct < 20 && brandMatch < 35) {
+          addWarning("This was marked as a reference asset, but the extracted source shows very weak identity signals. The fetch may be incomplete or the source may not actually be a VeriPura baseline.");
+        }
+      }
+
+      if (state.mode === "website" && state.sourceMeta.fetchMode && state.sourceMeta.fetchMode !== "direct-fetch") {
+        addWarning(`Website source was retrieved via ${state.sourceMeta.fetchMode}. Partial HTML may reduce accuracy, especially for metadata and style detection.`);
+      }
+
+      if (caps.length) {
+        const lowestCap = Math.min(...caps.map(c => c.limit));
+        finalScore = Math.min(finalScore, lowestCap);
+      }
+
+      finalScore = clamp(finalScore, 0, 100);
+
+      const grade =
+        finalScore >= 90 ? "Strong Match" :
+        finalScore >= 75 ? "Reasonable Match" :
+        finalScore >= 60 ? "Partial Match" :
+        "Weak Match";
+
+      const categoryRows = {
+        identity: identityPct,
+        system: systemPct,
+        tone: tonePct,
+        technical: technicalPct,
+        accessibility: accessibilityPct
+      };
+
+      const allItems = [...positives, ...findings];
 
       state.audit = {
         summary: {
           title: sourceTitle,
           sourceContent,
           strictness,
+          reviewMode,
           source: state.sourceName || "Pasted content",
-          percentage,
+          finalScore,
+          brandMatch,
+          executionQuality,
           grade,
-          totalIssues: issues.length,
-          categories
+          positivesCount: positives.length,
+          findingsCount: findings.length,
+          caps,
+          warnings,
+          categories,
+          categoryPercents: categoryRows
         },
-        issues,
+        items: allItems,
+        positives,
+        findings,
         normalizedText: normalized
       };
 
@@ -1531,72 +1920,94 @@
       renderResults(state.audit);
       els.downloadMdBtn.disabled = false;
       els.downloadDocBtn.disabled = false;
-      els.copySuggestionsBtn.disabled = issues.length === 0;
+      els.copySuggestionsBtn.disabled = findings.length === 0;
 
       saveLastAudit();
     }
 
-    function getFilteredIssues(issues) {
-      if (state.currentFilter === "all") return issues;
-      return issues.filter(issue => {
-        return issue.severity === state.currentFilter || issue.category === state.currentFilter;
+    function getFilteredItems(items) {
+      if (state.currentFilter === "all") return items;
+      return items.filter(item => {
+        return item.severity === state.currentFilter || item.category === state.currentFilter || item.kind === state.currentFilter;
       });
     }
 
     function renderResults(audit) {
-      const { summary, issues, normalizedText } = audit;
-      const filteredIssues = getFilteredIssues(issues);
+      const { summary, items, normalizedText } = audit;
+      const filteredItems = getFilteredItems(items);
 
-      const categoryRows = Object.entries(summary.categories)
-        .map(([key, item]) => `
-          <tr>
-            <td>${labelize(key)}</td>
-            <td>${item.score} / ${item.max}</td>
-            <td>${Math.round((item.score / item.max) * 100)}%</td>
-          </tr>
-        `)
-        .join("");
+      const categoryRows = Object.entries(summary.categoryPercents).map(([key, pct]) => `
+        <tr>
+          <td>${labelize(key)}</td>
+          <td>${summary.categories[key].score} / ${summary.categories[key].max}</td>
+          <td>${pct}%</td>
+        </tr>
+      `).join("");
+
+      const capHtml = summary.caps.length
+        ? `<ul class="clean">${summary.caps.map(c => `<li><strong>Cap applied:</strong> ${escapeHtml(c.reason)} — final score limited to ${c.limit}</li>`).join("")}</ul>`
+        : `<div>No score cap applied.</div>`;
+
+      const warningHtml = summary.warnings.length
+        ? `<ul class="clean">${summary.warnings.map(w => `<li>${escapeHtml(w)}</li>`).join("")}</ul>`
+        : `<div>No additional audit warnings.</div>`;
 
       const filterStatus = state.currentFilter === "all"
-        ? `Showing all ${issues.length} finding${issues.length === 1 ? "" : "s"}`
-        : filteredIssues.length
-          ? `Showing ${filteredIssues.length} matching finding${filteredIssues.length === 1 ? "" : "s"}`
-          : "No findings match this filter";
+        ? `Showing all ${items.length} item${items.length === 1 ? "" : "s"}`
+        : filteredItems.length
+          ? `Showing ${filteredItems.length} matching item${filteredItems.length === 1 ? "" : "s"}`
+          : "No items match this filter";
 
-      const issuesHtml = filteredIssues.length
-        ? filteredIssues.map((issue, index) => `
-            <article class="result-card" id="finding-${index}">
-              <div class="result-head">
+      const itemHtml = filteredItems.length
+        ? filteredItems.map((item, index) => `
+          <article class="result-card" id="finding-${index}">
+            <div class="result-head">
+              <div>
+                <h3>${escapeHtml(item.title)}</h3>
+                <p>${escapeHtml(item.explanation)}</p>
+              </div>
+              <span class="severity sev-${item.severity}">${escapeHtml(item.severity)}</span>
+            </div>
+            <div class="result-body">
+              <div class="result-grid">
                 <div>
-                  <h3>${escapeHtml(issue.title)}</h3>
-                  <p>${escapeHtml(issue.explanation)}</p>
+                  <div class="mini-title">${item.kind === "positive" ? "Supporting Evidence" : "Relevant Snippet"}</div>
+                  <div class="snippet">${item.kind === "positive" ? highlightSnippet(item.snippet || normalizedText.slice(0, 240), item.matchText, true) : highlightSnippet(item.snippet || normalizedText.slice(0, 240), item.matchText, false)}</div>
                 </div>
-                <span class="severity sev-${issue.severity}">${escapeHtml(issue.severity)}</span>
-              </div>
-              <div class="result-body">
-                <div class="result-grid">
-                  <div>
-                    <div class="mini-title">Highlighted Violation</div>
-                    <div class="snippet">${highlightSnippet(issue.snippet || normalizedText.slice(0, 240), issue.matchText)}</div>
-                  </div>
-                  <div>
-                    <div class="mini-title">Suggested Change</div>
-                    <div class="snippet">${escapeHtml(issue.suggestion)}</div>
-                  </div>
+                <div>
+                  <div class="mini-title">${item.kind === "positive" ? "Interpretation" : "Suggested Change"}</div>
+                  <div class="snippet">${escapeHtml(item.suggestion)}</div>
                 </div>
               </div>
-            </article>
-          `).join("")
-        : `<div class="empty-state">No findings match this filter.</div>`;
+            </div>
+          </article>
+        `).join("")
+        : `<div class="empty-state">No items match this filter.</div>`;
 
       els.resultsPane.innerHTML = `
         <div class="score-grid">
           <div class="score-card">
-            <div class="label">Compliance Score</div>
-            <div class="score">${summary.percentage}</div>
+            <div class="label">Final Score</div>
+            <div class="score">${summary.finalScore}</div>
             <div class="grade-pill">${escapeHtml(summary.grade)}</div>
-            <div style="margin-top:14px; font-size:0.92rem; color: var(--sky);">
-              ${summary.totalIssues} issue${summary.totalIssues === 1 ? "" : "s"} detected
+
+            <div class="score-mini-grid">
+              <div class="score-mini">
+                <span class="k">Brand Match</span>
+                <span class="v">${summary.brandMatch}</span>
+              </div>
+              <div class="score-mini">
+                <span class="k">Execution Quality</span>
+                <span class="v">${summary.executionQuality}</span>
+              </div>
+              <div class="score-mini">
+                <span class="k">Positive Proofs</span>
+                <span class="v">${summary.positivesCount}</span>
+              </div>
+              <div class="score-mini">
+                <span class="k">Findings</span>
+                <span class="v">${summary.findingsCount}</span>
+              </div>
             </div>
           </div>
 
@@ -1605,7 +2016,7 @@
               <div class="result-head">
                 <div>
                   <h3>Category Summary</h3>
-                  <p>Weighted scoring across tone, typography, palette discipline, metadata, calls to action, document structure, and accessibility.</p>
+                  <p>Identity and System drive Brand Match. Tone, Technical, and Accessibility drive Execution Quality.</p>
                 </div>
               </div>
               <div class="result-body">
@@ -1621,17 +2032,33 @@
             <div class="result-card">
               <div class="result-head">
                 <div>
+                  <h3>Score Controls</h3>
+                  <p>Caps and audit warnings explain why a clean-looking page may still score low as VeriPura brand material.</p>
+                </div>
+              </div>
+              <div class="result-body">
+                <div class="mini-title">Caps</div>
+                <div class="snippet">${capHtml}</div>
+                <div style="height:12px"></div>
+                <div class="mini-title">Warnings</div>
+                <div class="snippet">${warningHtml}</div>
+              </div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-head">
+                <div>
                   <h3>Manual Review Checklist</h3>
-                  <p>These checks remain human review items even after a strong score.</p>
+                  <p>These remain human-review items even after a strong result.</p>
                 </div>
               </div>
               <div class="result-body">
                 <ul class="clean">
+                  <li>Confirm actual rendered font usage, not just imported font references.</li>
+                  <li>Confirm real palette application in the live rendered page.</li>
                   <li>Confirm logo spacing, contrast, and approved color handling.</li>
                   <li>Confirm imagery and portrait direction are serious and enterprise-appropriate.</li>
-                  <li>Confirm Gold remains an accent rather than a dominant field color.</li>
-                  <li>Confirm type hierarchy follows serif headline, sans body, mono metadata logic.</li>
-                  <li>Confirm metadata, social preview, and accessibility standards are complete.</li>
+                  <li>Confirm fetched website HTML was complete enough for fair evaluation.</li>
                 </ul>
               </div>
             </div>
@@ -1640,20 +2067,14 @@
 
         <div style="height:18px"></div>
 
-        <div
-          id="filterStatusBox"
-          class="filter-status"
-          role="button"
-          tabindex="0"
-          aria-label="Jump to filtered findings"
-        >
+        <div id="filterStatusBox" class="filter-status" role="button" tabindex="0" aria-label="Jump to filtered results">
           <div class="mini-title">Filter Result</div>
           <div>${escapeHtml(filterStatus)}</div>
         </div>
 
         <div style="height:12px"></div>
 
-        <div id="findingsResults" class="results-stack">${issuesHtml}</div>
+        <div id="findingsResults" class="results-stack">${itemHtml}</div>
       `;
 
       const filterStatusBox = document.getElementById("filterStatusBox");
@@ -1663,7 +2084,6 @@
         const jumpToFindings = () => {
           findingsResults.scrollIntoView({ behavior: "smooth", block: "start" });
         };
-
         filterStatusBox.addEventListener("click", jumpToFindings);
         filterStatusBox.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -1675,7 +2095,7 @@
     }
 
     function buildMarkdownReport(audit) {
-      const { summary, issues } = audit;
+      const { summary, positives, findings } = audit;
       const lines = [];
 
       lines.push(
@@ -1684,34 +2104,67 @@
         `**Title:** ${summary.title}`,
         `**Source Content:** ${labelize(summary.sourceContent)}`,
         `**Strictness:** ${labelize(summary.strictness)}`,
+        `**Review Lens:** ${labelize(summary.reviewMode)}`,
         `**Source:** ${summary.source}`,
-        `**Compliance Score:** ${summary.percentage}`,
+        `**Final Score:** ${summary.finalScore}`,
+        `**Brand Match:** ${summary.brandMatch}`,
+        `**Execution Quality:** ${summary.executionQuality}`,
         `**Grade:** ${summary.grade}`,
-        `**Issues Detected:** ${summary.totalIssues}`,
-        "",
+        `**Positive Proofs:** ${summary.positivesCount}`,
+        `**Findings:** ${summary.findingsCount}`,
+        ""
+      );
+
+      if (summary.caps.length) {
+        lines.push("## Score Caps", "");
+        summary.caps.forEach(c => lines.push(`- ${c.reason} — final score limited to ${c.limit}`));
+        lines.push("");
+      }
+
+      if (summary.warnings.length) {
+        lines.push("## Audit Warnings", "");
+        summary.warnings.forEach(w => lines.push(`- ${w}`));
+        lines.push("");
+      }
+
+      lines.push(
         "## Category Scores",
         "",
         "| Category | Score | Percent |",
         "|---|---:|---:|"
       );
 
-      Object.entries(summary.categories).forEach(([key, value]) => {
-        lines.push(`| ${labelize(key)} | ${value.score} / ${value.max} | ${Math.round((value.score / value.max) * 100)}% |`);
+      Object.entries(summary.categoryPercents).forEach(([key, pct]) => {
+        lines.push(`| ${labelize(key)} | ${summary.categories[key].score} / ${summary.categories[key].max} | ${pct}% |`);
       });
 
-      lines.push("", "## Violations and Suggested Changes", "");
-
-      if (!issues.length) {
-        lines.push("No rule-based violations were detected by the current audit set.");
+      lines.push("", "## Positive Proofs", "");
+      if (!positives.length) {
+        lines.push("No strong positive brand proofs were detected.");
       } else {
-        issues.forEach((issue, i) => {
+        positives.forEach((item, i) => {
           lines.push(
-            `### ${i + 1}. ${issue.title}`,
-            `- **Category:** ${labelize(issue.category)}`,
-            `- **Severity:** ${labelize(issue.severity)}`,
-            `- **Why this matters:** ${issue.explanation}`,
-            `- **Suggested change:** ${issue.suggestion}`,
-            `- **Snippet:** ${issue.snippet || "N/A"}`,
+            `### ${i + 1}. ${item.title}`,
+            `- **Category:** ${labelize(item.category)}`,
+            `- **Why it matters:** ${item.explanation}`,
+            `- **Evidence:** ${item.snippet || "N/A"}`,
+            ""
+          );
+        });
+      }
+
+      lines.push("", "## Findings and Suggested Changes", "");
+      if (!findings.length) {
+        lines.push("No findings were detected by the current audit set.");
+      } else {
+        findings.forEach((item, i) => {
+          lines.push(
+            `### ${i + 1}. ${item.title}`,
+            `- **Category:** ${labelize(item.category)}`,
+            `- **Severity:** ${labelize(item.severity)}`,
+            `- **Why this matters:** ${item.explanation}`,
+            `- **Suggested change:** ${item.suggestion}`,
+            `- **Snippet:** ${item.snippet || "N/A"}`,
             ""
           );
         });
@@ -1720,39 +2173,53 @@
       lines.push(
         "## Manual Review Items",
         "",
-        "- Confirm logo spacing, color handling, and minimum size.",
-        "- Confirm imagery style, portrait treatment, and social-preview composition.",
-        "- Confirm contrast on dark surfaces and light document fields.",
-        "- Confirm Gold is used as a controlled accent only.",
-        "- Confirm hierarchy uses DM Serif Display, DM Sans, and DM Mono correctly."
+        "- Confirm actual rendered font usage rather than just imported font references.",
+        "- Confirm live palette usage and CTA styling on the rendered page.",
+        "- Confirm fetched website HTML was complete enough for fair evaluation.",
+        "- Confirm logo spacing, contrast, and imagery treatment manually."
       );
 
       return lines.join("\n");
     }
 
     function buildWordHtmlReport(audit) {
-      const { summary, issues } = audit;
+      const { summary, positives, findings } = audit;
 
-      const rows = Object.entries(summary.categories)
-        .map(([key, value]) => `
-          <tr>
-            <td>${escapeHtml(labelize(key))}</td>
-            <td>${value.score} / ${value.max}</td>
-            <td>${Math.round((value.score / value.max) * 100)}%</td>
-          </tr>
-        `)
-        .join("");
+      const rows = Object.entries(summary.categoryPercents).map(([key, pct]) => `
+        <tr>
+          <td>${escapeHtml(labelize(key))}</td>
+          <td>${summary.categories[key].score} / ${summary.categories[key].max}</td>
+          <td>${pct}%</td>
+        </tr>
+      `).join("");
 
-      const issueBlocks = issues.length
-        ? issues.map((issue, i) => `
-            <h3>${i + 1}. ${escapeHtml(issue.title)}</h3>
-            <p><strong>Category:</strong> ${escapeHtml(labelize(issue.category))}<br>
-            <strong>Severity:</strong> ${escapeHtml(labelize(issue.severity))}</p>
-            <p><strong>Why this matters:</strong> ${escapeHtml(issue.explanation)}</p>
-            <p><strong>Suggested change:</strong> ${escapeHtml(issue.suggestion)}</p>
-            <p><strong>Snippet:</strong><br>${escapeHtml(issue.snippet || "N/A")}</p>
-          `).join("")
-        : "<p>No rule-based violations were detected by the current audit set.</p>";
+      const positiveBlocks = positives.length
+        ? positives.map((item, i) => `
+          <h3>${i + 1}. ${escapeHtml(item.title)}</h3>
+          <p><strong>Category:</strong> ${escapeHtml(labelize(item.category))}</p>
+          <p><strong>Why it matters:</strong> ${escapeHtml(item.explanation)}</p>
+          <p><strong>Evidence:</strong><br>${escapeHtml(item.snippet || "N/A")}</p>
+        `).join("")
+        : "<p>No strong positive brand proofs were detected.</p>";
+
+      const findingBlocks = findings.length
+        ? findings.map((item, i) => `
+          <h3>${i + 1}. ${escapeHtml(item.title)}</h3>
+          <p><strong>Category:</strong> ${escapeHtml(labelize(item.category))}<br>
+          <strong>Severity:</strong> ${escapeHtml(labelize(item.severity))}</p>
+          <p><strong>Why this matters:</strong> ${escapeHtml(item.explanation)}</p>
+          <p><strong>Suggested change:</strong> ${escapeHtml(item.suggestion)}</p>
+          <p><strong>Snippet:</strong><br>${escapeHtml(item.snippet || "N/A")}</p>
+        `).join("")
+        : "<p>No findings were detected by the current audit set.</p>";
+
+      const caps = summary.caps.length
+        ? `<ul>${summary.caps.map(c => `<li>${escapeHtml(c.reason)} — final score limited to ${c.limit}</li>`).join("")}</ul>`
+        : "<p>No score cap applied.</p>";
+
+      const warnings = summary.warnings.length
+        ? `<ul>${summary.warnings.map(w => `<li>${escapeHtml(w)}</li>`).join("")}</ul>`
+        : "<p>No additional audit warnings.</p>";
 
       return `<!DOCTYPE html>
 <html>
@@ -1777,10 +2244,14 @@ th{background:#EBF3FA}
     <strong>Title:</strong> ${escapeHtml(summary.title)}<br>
     <strong>Source Content:</strong> ${escapeHtml(labelize(summary.sourceContent))}<br>
     <strong>Strictness:</strong> ${escapeHtml(labelize(summary.strictness))}<br>
+    <strong>Review Lens:</strong> ${escapeHtml(labelize(summary.reviewMode))}<br>
     <strong>Source:</strong> ${escapeHtml(summary.source)}<br>
-    <strong>Compliance Score:</strong> ${summary.percentage}<br>
+    <strong>Final Score:</strong> ${summary.finalScore}<br>
+    <strong>Brand Match:</strong> ${summary.brandMatch}<br>
+    <strong>Execution Quality:</strong> ${summary.executionQuality}<br>
     <strong>Grade:</strong> ${escapeHtml(summary.grade)}<br>
-    <strong>Issues Detected:</strong> ${summary.totalIssues}
+    <strong>Positive Proofs:</strong> ${summary.positivesCount}<br>
+    <strong>Findings:</strong> ${summary.findingsCount}
   </p>
 
   <h2>Category Scores</h2>
@@ -1789,16 +2260,24 @@ th{background:#EBF3FA}
     <tbody>${rows}</tbody>
   </table>
 
-  <h2>Violations and Suggested Changes</h2>
-  ${issueBlocks}
+  <h2>Score Caps</h2>
+  ${caps}
+
+  <h2>Audit Warnings</h2>
+  ${warnings}
+
+  <h2>Positive Proofs</h2>
+  ${positiveBlocks}
+
+  <h2>Findings and Suggested Changes</h2>
+  ${findingBlocks}
 
   <h2>Manual Review Items</h2>
   <ul>
-    <li>Confirm logo spacing, contrast, and approved color handling.</li>
-    <li>Confirm imagery and portrait direction are serious and enterprise-appropriate.</li>
-    <li>Confirm Gold remains an accent rather than a dominant field color.</li>
-    <li>Confirm type hierarchy follows serif headline, sans body, mono metadata logic.</li>
-    <li>Confirm metadata, social preview, and accessibility standards are complete.</li>
+    <li>Confirm actual rendered font usage rather than just imported font references.</li>
+    <li>Confirm live palette usage and CTA styling on the rendered page.</li>
+    <li>Confirm fetched website HTML was complete enough for fair evaluation.</li>
+    <li>Confirm logo spacing, contrast, and imagery treatment manually.</li>
   </ul>
 
   <p class="small">Generated by the VeriPura Brand Auditor.</p>
@@ -1827,10 +2306,10 @@ th{background:#EBF3FA}
     }
 
     function buildSuggestionsText() {
-      if (!state.audit || !state.audit.issues.length) return "";
-      return state.audit.issues
-        .map((issue, i) => `${i + 1}. ${issue.title}\nSuggested change: ${issue.suggestion}\n`)
-        .join("\n");
+      if (!state.audit || !state.audit.findings.length) return "";
+      return state.audit.findings.map((item, i) =>
+        `${i + 1}. ${item.title}\nSuggested change: ${item.suggestion}\n`
+      ).join("\n");
     }
 
     async function copySuggestions() {
@@ -1875,6 +2354,8 @@ th{background:#EBF3FA}
           url: els.urlInput.value,
           docType: els.docType.value,
           strictness: els.strictness.value,
+          reviewMode: els.reviewMode.value,
+          benchmark: els.benchmark.value,
           audit: state.audit,
           sourceName: state.sourceName
         };
@@ -1894,6 +2375,8 @@ th{background:#EBF3FA}
         if (data.url) els.urlInput.value = data.url;
         if (data.docType) els.docType.value = data.docType;
         if (data.strictness) els.strictness.value = data.strictness;
+        if (data.reviewMode) els.reviewMode.value = data.reviewMode;
+        if (data.benchmark) els.benchmark.value = data.benchmark;
         if (data.sourceName) state.sourceName = data.sourceName;
 
         updateSummary();
@@ -1905,7 +2388,7 @@ th{background:#EBF3FA}
           renderResults(data.audit);
           els.downloadMdBtn.disabled = false;
           els.downloadDocBtn.disabled = false;
-          els.copySuggestionsBtn.disabled = (data.audit.issues || []).length === 0;
+          els.copySuggestionsBtn.disabled = (data.audit.findings || []).length === 0;
         }
       } catch {}
     }
@@ -1917,24 +2400,17 @@ th{background:#EBF3FA}
         btn.classList.toggle("active", btn.dataset.filter === filter);
       });
 
-      if (state.audit) {
-        renderResults(state.audit);
-      }
+      if (state.audit) renderResults(state.audit);
     }
 
     function focusPrimaryAuditField() {
-      if (state.mode === "website") {
-        els.urlInput.focus();
-      } else {
-        els.fileInput.focus();
-      }
+      if (state.mode === "website") els.urlInput.focus();
+      else els.fileInput.focus();
     }
 
     function startAuditFlow() {
       els.auditInputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-      setTimeout(() => {
-        focusPrimaryAuditField();
-      }, 250);
+      setTimeout(() => focusPrimaryAuditField(), 250);
     }
 
     function initializeApp() {
@@ -1971,6 +2447,8 @@ th{background:#EBF3FA}
 
       els.docType.addEventListener("change", () => { updateSummary(); saveLastAudit(); });
       els.strictness.addEventListener("change", () => { updateSummary(); saveLastAudit(); });
+      els.reviewMode.addEventListener("change", () => { updateSummary(); saveLastAudit(); });
+      els.benchmark.addEventListener("input", () => { updateSummary(); saveLastAudit(); });
       els.titleInput.addEventListener("input", saveLastAudit);
       els.textInput.addEventListener("input", saveLastAudit);
       els.urlInput.addEventListener("input", saveLastAudit);
@@ -2008,4 +2486,3 @@ th{background:#EBF3FA}
   </script>
 </body>
 </html>
-```
