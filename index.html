@@ -107,12 +107,6 @@
       box-shadow: 0 6px 18px rgba(212,168,71,0.24);
     }
     .btn-primary:hover { background: #ddb659; }
-    .btn-secondary {
-      background: transparent;
-      color: var(--white);
-      border-color: rgba(255,255,255,0.26);
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.07); }
     .btn-light {
       background: var(--white);
       color: var(--navy);
@@ -755,7 +749,7 @@
 
   <script>
     const PDFJS_WORKER = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.6.172/build/pdf.worker.min.js";
-    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v3";
+    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v4";
 
     function getPdfJs() {
       if (window.pdfjsLib) {
@@ -1525,9 +1519,10 @@
 
     function getFilteredIssues(issues) {
       if (state.currentFilter === "all") return issues;
-      return issues.filter(issue =>
-        issue.severity === state.currentFilter || issue.category === state.currentFilter
-      );
+
+      return issues.filter(issue => {
+        return issue.severity === state.currentFilter || issue.category === state.currentFilter;
+      });
     }
 
     function renderResults(audit) {
@@ -1577,9 +1572,7 @@
             <div class="score">${summary.percentage}</div>
             <div class="grade-pill">${escapeHtml(summary.grade)}</div>
             <div style="margin-top:14px; font-size:0.92rem; color: var(--sky);">
-              ${summary.totalIssues} issue${summary.totalIssues === 1 ? "" : "s"} detected<br>
-              Source Content: ${escapeHtml(labelize(summary.sourceContent))}<br>
-              Source: ${escapeHtml(summary.source)}
+              ${summary.totalIssues} issue${summary.totalIssues === 1 ? "" : "s"} detected
             </div>
           </div>
 
@@ -1847,6 +1840,9 @@ th{background:#EBF3FA}
         if (data.docType) els.docType.value = data.docType;
         if (data.strictness) els.strictness.value = data.strictness;
         if (data.sourceName) state.sourceName = data.sourceName;
+
+        updateSummary();
+
         if (data.audit) {
           state.audit = data.audit;
           state.markdownReport = buildMarkdownReport(data.audit);
@@ -1856,17 +1852,19 @@ th{background:#EBF3FA}
           els.downloadDocBtn.disabled = false;
           els.copySuggestionsBtn.disabled = (data.audit.issues || []).length === 0;
         }
-
-        updateSummary();
       } catch {}
     }
 
     function applyFilter(filter) {
       state.currentFilter = filter;
+
       [...els.filterBar.querySelectorAll(".filter-chip")].forEach(btn => {
         btn.classList.toggle("active", btn.dataset.filter === filter);
       });
-      if (state.audit) renderResults(state.audit);
+
+      if (state.audit) {
+        renderResults(state.audit);
+      }
     }
 
     function focusPrimaryAuditField() {
