@@ -400,6 +400,25 @@
       border-color: var(--navy);
     }
 
+    .filter-status {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background-color 140ms ease, border-color 140ms ease;
+    }
+
+    .filter-status:hover {
+      background: var(--pale);
+    }
+
+    .filter-status:focus-visible {
+      outline: 2px solid var(--blue-light);
+      outline-offset: 2px;
+    }
+
     .score-grid {
       display: grid;
       grid-template-columns: 220px 1fr;
@@ -749,7 +768,7 @@
 
   <script>
     const PDFJS_WORKER = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.6.172/build/pdf.worker.min.js";
-    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v4";
+    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v5";
 
     function getPdfJs() {
       if (window.pdfjsLib) {
@@ -1519,7 +1538,6 @@
 
     function getFilteredIssues(issues) {
       if (state.currentFilter === "all") return issues;
-
       return issues.filter(issue => {
         return issue.severity === state.currentFilter || issue.category === state.currentFilter;
       });
@@ -1539,9 +1557,15 @@
         `)
         .join("");
 
+      const filterStatus = state.currentFilter === "all"
+        ? `Showing all ${issues.length} finding${issues.length === 1 ? "" : "s"}`
+        : filteredIssues.length
+          ? `Showing ${filteredIssues.length} matching finding${filteredIssues.length === 1 ? "" : "s"}`
+          : "No findings match this filter";
+
       const issuesHtml = filteredIssues.length
-        ? filteredIssues.map(issue => `
-            <article class="result-card">
+        ? filteredIssues.map((issue, index) => `
+            <article class="result-card" id="finding-${index}">
               <div class="result-head">
                 <div>
                   <h3>${escapeHtml(issue.title)}</h3>
@@ -1563,7 +1587,7 @@
               </div>
             </article>
           `).join("")
-        : `<div class="empty-state">No findings match the current filter.</div>`;
+        : `<div class="empty-state">No findings match this filter.</div>`;
 
       els.resultsPane.innerHTML = `
         <div class="score-grid">
@@ -1615,8 +1639,39 @@
         </div>
 
         <div style="height:18px"></div>
-        <div class="results-stack">${issuesHtml}</div>
+
+        <div
+          id="filterStatusBox"
+          class="filter-status"
+          role="button"
+          tabindex="0"
+          aria-label="Jump to filtered findings"
+        >
+          <div class="mini-title">Filter Result</div>
+          <div>${escapeHtml(filterStatus)}</div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div id="findingsResults" class="results-stack">${issuesHtml}</div>
       `;
+
+      const filterStatusBox = document.getElementById("filterStatusBox");
+      const findingsResults = document.getElementById("findingsResults");
+
+      if (filterStatusBox && findingsResults) {
+        const jumpToFindings = () => {
+          findingsResults.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
+
+        filterStatusBox.addEventListener("click", jumpToFindings);
+        filterStatusBox.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            jumpToFindings();
+          }
+        });
+      }
     }
 
     function buildMarkdownReport(audit) {
@@ -1953,3 +2008,4 @@ th{background:#EBF3FA}
   </script>
 </body>
 </html>
+```
