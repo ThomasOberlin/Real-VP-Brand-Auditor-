@@ -28,13 +28,13 @@
       --muted: #5A6878;
       --border: #CBD8E8;
       --radius: 12px;
-      --radius-sm: 10px;
       --shadow: 0 10px 30px rgba(15,36,68,0.08);
       --shadow-soft: 0 4px 16px rgba(15,36,68,0.06);
       --max: 1440px;
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); }
     body { font-family: "DM Sans", system-ui, sans-serif; line-height: 1.5; }
     a { color: var(--blue); text-decoration: none; }
@@ -566,7 +566,6 @@
 
     .footer { padding: 24px 0 48px; color: var(--muted); }
     .footer .mono-label { display: block; margin-bottom: 6px; }
-    .hidden { display: none !important; }
 
     @media (max-width: 1120px) {
       .layout, .hero-grid, .score-grid, .result-grid, .diag-grid, .summary-grid { grid-template-columns: 1fr; }
@@ -591,8 +590,7 @@
         <div class="subbrand">Brand Compliance Auditor</div>
       </div>
       <div class="top-actions">
-        <button class="btn btn-secondary" id="demoBtn" type="button">Load Demo</button>
-        <button class="btn btn-primary" id="analyzeTopBtn" type="button">Run Audit</button>
+        <button class="btn btn-primary" id="startAuditBtn" type="button">Start Audit</button>
       </div>
     </div>
   </header>
@@ -618,7 +616,7 @@
 
   <main class="main">
     <div class="container layout">
-      <section class="panel">
+      <section class="panel" id="auditInputPanel">
         <div class="panel-header">
           <h2>Audit Input</h2>
           <p>Select an audit mode, then upload a file or submit a public URL.</p>
@@ -642,7 +640,7 @@
             </div>
           </div>
 
-          <div id="urlFields" class="hidden">
+          <div id="urlFields" style="display:none;">
             <div class="input-group">
               <label for="urlInput">Public Website URL</label>
               <input id="urlInput" type="url" placeholder="https://example.com" />
@@ -663,16 +661,18 @@
 
           <div class="row">
             <div class="input-group">
-              <label for="docType">Output Context</label>
+              <label for="docType">Source Content</label>
               <select id="docType">
                 <option value="website">Website Page</option>
-                <option value="proposal">Proposal PDF</option>
+                <option value="proposal">Proposal</option>
                 <option value="one-pager">One-Pager</option>
                 <option value="deck">Investor Deck</option>
                 <option value="pilot">Pilot Programme Document</option>
                 <option value="partner">Partner Programme Sheet</option>
                 <option value="case-study">Case Study</option>
                 <option value="email">Email</option>
+                <option value="social">Social Media Post</option>
+                <option value="other">Other</option>
               </select>
             </div>
             <div class="input-group">
@@ -718,7 +718,7 @@
             <div class="summary-grid">
               <div class="summary-item"><span class="summary-label">Mode</span><span id="summaryMode">Document</span></div>
               <div class="summary-item"><span class="summary-label">Source</span><span id="summarySource">None</span></div>
-              <div class="summary-item"><span class="summary-label">Context</span><span id="summaryContext">Website Page</span></div>
+              <div class="summary-item"><span class="summary-label">Source Content</span><span id="summaryContext">Website Page</span></div>
               <div class="summary-item"><span class="summary-label">Strictness</span><span id="summaryStrictness">Tight Standards</span></div>
             </div>
           </div>
@@ -755,7 +755,7 @@
 
   <script>
     const PDFJS_WORKER = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.6.172/build/pdf.worker.min.js";
-    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v2";
+    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v3";
 
     function getPdfJs() {
       if (window.pdfjsLib) {
@@ -819,12 +819,11 @@
       strictness: document.getElementById("strictness"),
       resultsPane: document.getElementById("resultsPane"),
       analyzeBtn: document.getElementById("analyzeBtn"),
-      analyzeTopBtn: document.getElementById("analyzeTopBtn"),
       clearBtn: document.getElementById("clearBtn"),
       downloadMdBtn: document.getElementById("downloadMdBtn"),
       downloadDocBtn: document.getElementById("downloadDocBtn"),
       copySuggestionsBtn: document.getElementById("copySuggestionsBtn"),
-      demoBtn: document.getElementById("demoBtn"),
+      startAuditBtn: document.getElementById("startAuditBtn"),
       statusBanner: document.getElementById("statusBanner"),
       filterBar: document.getElementById("filterBar"),
       summaryMode: document.getElementById("summaryMode"),
@@ -834,7 +833,8 @@
       diagPdf: document.getElementById("diagPdf"),
       diagDocx: document.getElementById("diagDocx"),
       diagStorage: document.getElementById("diagStorage"),
-      diagSource: document.getElementById("diagSource")
+      diagSource: document.getElementById("diagSource"),
+      auditInputPanel: document.getElementById("auditInputPanel")
     };
 
     function showStatus(message, type = "info") {
@@ -933,8 +933,8 @@
       });
 
       const showUrl = mode === "website";
-      els.urlFields.classList.toggle("hidden", !showUrl);
-      els.fileFields.classList.toggle("hidden", showUrl);
+      els.urlFields.style.display = showUrl ? "" : "none";
+      els.fileFields.style.display = showUrl ? "none" : "";
       updateSummary();
       clearStatus();
     }
@@ -1151,7 +1151,7 @@
       };
 
       const sourceTitle = els.titleInput.value.trim() || state.sourceMeta.title || state.sourceName || "Untitled Audit";
-      const context = els.docType.value;
+      const sourceContent = els.docType.value;
       const strictness = els.strictness.value;
       const textLower = normalized.toLowerCase();
       const htmlLower = (state.sourceHtml || "").toLowerCase();
@@ -1415,7 +1415,7 @@
         });
       }
 
-      if (["proposal", "pilot", "partner", "one-pager", "case-study"].includes(context)
+      if (["proposal", "pilot", "partner", "one-pager", "case-study"].includes(sourceContent)
         && !containsAny(textLower, ["scope", "review", "process", "deliverable", "document", "compliance", "verification", "timeline"])) {
         addIssue({
           category: "structure",
@@ -1428,7 +1428,7 @@
         });
       }
 
-      if (context === "deck"
+      if (sourceContent === "deck"
         && !containsAny(textLower, ["problem", "solution", "market", "risk", "workflow", "compliance", "verification"])) {
         addIssue({
           category: "structure",
@@ -1439,6 +1439,33 @@
           snippet: normalized.slice(0, 220),
           penalty: 3
         });
+      }
+
+      if (sourceContent === "case-study"
+        && !containsAny(textLower, ["challenge", "approach", "outcome", "result", "context"])) {
+        addIssue({
+          category: "structure",
+          severity: "major",
+          title: "Case study structure appears weak",
+          explanation: "Case studies should read like evidence-led material rather than generic promotion.",
+          suggestion: "Introduce a challenge, approach, and outcome structure.",
+          snippet: normalized.slice(0, 220),
+          penalty: 3
+        });
+      }
+
+      if (sourceContent === "social") {
+        if (normalized.length > 2200) {
+          addIssue({
+            category: "structure",
+            severity: "minor",
+            title: "Social Media Post appears overly long",
+            explanation: "Social posts should be compact, high-signal, and tightly edited.",
+            suggestion: "Tighten the copy and reduce unnecessary framing language.",
+            snippet: normalized.slice(0, 220),
+            penalty: 2
+          });
+        }
       }
 
       if (normalized.length < 140) {
@@ -1473,7 +1500,7 @@
       state.audit = {
         summary: {
           title: sourceTitle,
-          context,
+          sourceContent,
           strictness,
           source: state.sourceName || "Pasted content",
           percentage,
@@ -1551,7 +1578,7 @@
             <div class="grade-pill">${escapeHtml(summary.grade)}</div>
             <div style="margin-top:14px; font-size:0.92rem; color: var(--sky);">
               ${summary.totalIssues} issue${summary.totalIssues === 1 ? "" : "s"} detected<br>
-              Context: ${escapeHtml(labelize(summary.context))}<br>
+              Source Content: ${escapeHtml(labelize(summary.sourceContent))}<br>
               Source: ${escapeHtml(summary.source)}
             </div>
           </div>
@@ -1607,7 +1634,7 @@
         "# VeriPura Brand Audit Report",
         "",
         `**Title:** ${summary.title}`,
-        `**Context:** ${labelize(summary.context)}`,
+        `**Source Content:** ${labelize(summary.sourceContent)}`,
         `**Strictness:** ${labelize(summary.strictness)}`,
         `**Source:** ${summary.source}`,
         `**Compliance Score:** ${summary.percentage}`,
@@ -1700,7 +1727,7 @@ th{background:#EBF3FA}
   <h1>VeriPura Brand Audit Report</h1>
   <p>
     <strong>Title:</strong> ${escapeHtml(summary.title)}<br>
-    <strong>Context:</strong> ${escapeHtml(labelize(summary.context))}<br>
+    <strong>Source Content:</strong> ${escapeHtml(labelize(summary.sourceContent))}<br>
     <strong>Strictness:</strong> ${escapeHtml(labelize(summary.strictness))}<br>
     <strong>Source:</strong> ${escapeHtml(summary.source)}<br>
     <strong>Compliance Score:</strong> ${summary.percentage}<br>
@@ -1767,27 +1794,6 @@ th{background:#EBF3FA}
       } catch {
         showStatus("Clipboard copy failed in this environment.", "warning");
       }
-    }
-
-    function loadDemo() {
-      clearAll();
-      setMode("website");
-
-      els.urlInput.value = "https://example.com";
-      els.titleInput.value = "Demo Audit";
-      els.textInput.value = "Revolutionary food trade platform. Unlock amazing growth with our cutting-edge solution. Get started now. This playful experience makes compliance fun and seamless.\n\nButton labels: Get Started, Learn More Now.";
-
-      const demoHtml = '<!doctype html><html><head><title>Revolutionary Platform</title><meta name="description" content="Amazing next-gen platform for growth." /><style>body{font-family:Arial}.hero{background:#ffffff}.btn{background:#ffcc00; box-shadow: 0 20px 50px rgba(0,0,0,.25)}</style><meta property="og:title" content="Revolutionary Platform"></head><body><a href="#">Get Started</a><img src="hero.jpg"></body></html>';
-
-      resetState(true);
-      state.sourceName = "demo.html";
-      state.sourceHtml = demoHtml;
-      state.sourceText = extractTextFromHtml(demoHtml);
-      parseHtmlArtifacts(demoHtml);
-      updateSummary();
-
-      showStatus("Demo content loaded and audited.", "success");
-      analyze();
     }
 
     async function runAudit() {
@@ -1863,6 +1869,21 @@ th{background:#EBF3FA}
       if (state.audit) renderResults(state.audit);
     }
 
+    function focusPrimaryAuditField() {
+      if (state.mode === "website") {
+        els.urlInput.focus();
+      } else {
+        els.fileInput.focus();
+      }
+    }
+
+    function startAuditFlow() {
+      els.auditInputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => {
+        focusPrimaryAuditField();
+      }, 250);
+    }
+
     function initializeApp() {
       const pdfjs = getPdfJs();
       if (!pdfjs) console.warn("pdfjsLib did not load; PDF parsing will be unavailable.");
@@ -1902,10 +1923,9 @@ th{background:#EBF3FA}
       els.urlInput.addEventListener("input", saveLastAudit);
 
       els.analyzeBtn.addEventListener("click", runAudit);
-      els.analyzeTopBtn.addEventListener("click", runAudit);
       els.clearBtn.addEventListener("click", clearAll);
-      els.demoBtn.addEventListener("click", loadDemo);
       els.copySuggestionsBtn.addEventListener("click", copySuggestions);
+      els.startAuditBtn.addEventListener("click", startAuditFlow);
 
       els.downloadMdBtn.addEventListener("click", () => {
         if (!state.audit) return;
