@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeriPura Brand Auditor</title>
-  <meta name="description" content="Static brand compliance checker for VeriPura websites, documents, decks, and metadata." />
+  <title>VeriPura Brand Auditor — Profile-Aware Edition</title>
+  <meta name="description" content="Profile-aware VeriPura brand auditor for websites, documents, decks, metadata, and campaign variants." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -27,11 +27,11 @@
       --ink: #1A2332;
       --muted: #5A6878;
       --border: #CBD8E8;
-      --success: #1e7a4b;
+      --success: #1f7a4d;
       --radius: 12px;
       --shadow: 0 10px 30px rgba(15,36,68,0.08);
       --shadow-soft: 0 4px 16px rgba(15,36,68,0.06);
-      --max: 1480px;
+      --max: 1540px;
     }
 
     * { box-sizing: border-box; }
@@ -233,7 +233,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 440px 1fr;
+      grid-template-columns: 470px 1fr;
       gap: 20px;
       align-items: start;
     }
@@ -343,14 +343,13 @@
       color: var(--ink);
       font-size: 0.92rem;
     }
-
     .status-banner.show { display: block; }
     .status-info { border-color: rgba(46,95,163,0.18); background: rgba(46,95,163,0.06); }
-    .status-success { border-color: rgba(30,122,75,0.2); background: rgba(30,122,75,0.08); }
+    .status-success { border-color: rgba(31,122,77,0.2); background: rgba(31,122,77,0.08); }
     .status-warning { border-color: rgba(212,168,71,0.24); background: rgba(212,168,71,0.10); }
     .status-error { border-color: rgba(200,80,74,0.22); background: rgba(200,80,74,0.08); }
 
-    .diagnostics, .input-summary, .filter-bar, .explain-box {
+    .diagnostics, .input-summary, .filter-bar, .explain-box, .profile-box {
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--white);
@@ -380,6 +379,20 @@
       color: var(--muted);
       font-size: 0.72rem;
       margin-bottom: 4px;
+    }
+
+    .profile-code {
+      width: 100%;
+      min-height: 300px;
+      font: 400 0.84rem/1.45 "DM Mono", monospace;
+      background: #fbfdff;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
     }
 
     .filter-bar {
@@ -417,7 +430,6 @@
       cursor: pointer;
       transition: background-color 140ms ease, border-color 140ms ease;
     }
-
     .filter-status:hover { background: var(--pale); }
     .filter-status:focus-visible {
       outline: 2px solid var(--blue-light);
@@ -426,7 +438,7 @@
 
     .score-grid {
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 300px 1fr;
       gap: 20px;
       align-items: start;
     }
@@ -536,11 +548,10 @@
       letter-spacing: 0.08em;
       border: 1px solid transparent;
     }
-
     .sev-critical { background: rgba(200,80,74,0.1); color: var(--red); border-color: rgba(200,80,74,0.22); }
     .sev-major { background: rgba(212,168,71,0.14); color: #8a691b; border-color: rgba(212,168,71,0.24); }
     .sev-minor { background: rgba(46,95,163,0.1); color: var(--blue); border-color: rgba(46,95,163,0.18); }
-    .sev-positive { background: rgba(30,122,75,0.08); color: var(--success); border-color: rgba(30,122,75,0.20); }
+    .sev-positive { background: rgba(31,122,77,0.08); color: var(--success); border-color: rgba(31,122,77,0.20); }
 
     .result-body { padding: 16px 18px 18px; }
 
@@ -579,8 +590,8 @@
     }
 
     mark.positive {
-      background: rgba(30,122,75,0.12);
-      color: #155c39;
+      background: rgba(31,122,77,0.12);
+      color: #155d39;
       padding: 0 2px;
       border-radius: 3px;
       box-decoration-break: clone;
@@ -622,7 +633,7 @@
     .footer { padding: 24px 0 48px; color: var(--muted); }
     .footer .mono-label { display: block; margin-bottom: 6px; }
 
-    @media (max-width: 1140px) {
+    @media (max-width: 1180px) {
       .layout, .hero-grid, .score-grid, .result-grid, .diag-grid, .summary-grid {
         grid-template-columns: 1fr;
       }
@@ -644,7 +655,7 @@
     <div class="topbar-inner">
       <div class="brand-block">
         <div class="brand"><span class="veri">Veri</span><span class="pura">Pura</span></div>
-        <div class="subbrand">Brand Compliance Auditor</div>
+        <div class="subbrand">Brand Compliance Auditor — Profile-Aware Edition</div>
       </div>
       <div class="top-actions">
         <button class="btn btn-primary" id="startAuditBtn" type="button">Start Audit</button>
@@ -655,20 +666,20 @@
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <div class="eyebrow">Operational Review Tool</div>
-        <h1>Check websites, documents, and decks against the VeriPura brand system.</h1>
-        <p>This version uses positive scoring, identity gating, and separate brand-match versus execution-quality scoring so generic enterprise content no longer passes as “VeriPura compliant.”</p>
+        <div class="eyebrow">Primary Reference: investors.veripura.com</div>
+        <h1>Audit against the core brand, investor reference, or the pilot campaign variant.</h1>
+        <p>This build uses your Tight Standards style book, a structured profile system, hard non-negotiables, a campaign-aware variant for veripura.com, and separate Brand Match versus Execution Quality scoring.</p>
       </div>
       <div class="hero-card">
-        <div class="mono-label">What this checks now</div>
+        <div class="mono-label">What changed</div>
         <div class="hero-metrics">
-          <div class="metric"><div class="label">Identity</div><div class="value">Brand proof</div></div>
-          <div class="metric"><div class="label">System</div><div class="value">Fonts + palette + CTA</div></div>
-          <div class="metric"><div class="label">Quality</div><div class="value">Tone + technicals</div></div>
+          <div class="metric"><div class="label">Profiles</div><div class="value">Core / Investor / Pilot</div></div>
+          <div class="metric"><div class="label">Scoring</div><div class="value">Positive + capped</div></div>
+          <div class="metric"><div class="label">Rules</div><div class="value">Style-book driven</div></div>
         </div>
         <div class="status-line">
           <span class="pulse"></span>
-          <span>Candidate pages are capped when they do not show real VeriPura identity.</span>
+          <span>investors.veripura.com is the primary reference. veripura.com is treated as an approved pilot-sales campaign variant.</span>
         </div>
       </div>
     </div>
@@ -679,7 +690,7 @@
       <section class="panel" id="auditInputPanel">
         <div class="panel-header">
           <h2>Audit Input</h2>
-          <p>Select an audit mode, then upload a file or submit a public URL.</p>
+          <p>Select the audit mode, the target profile, and the content type before running the audit.</p>
         </div>
         <div class="panel-body stack">
           <div>
@@ -694,12 +705,44 @@
 
           <div class="row">
             <div class="input-group">
+              <label for="targetProfile">Target Profile</label>
+              <select id="targetProfile">
+                <option value="core">Core Tight Standards</option>
+                <option value="investor" selected>Investor Reference</option>
+                <option value="pilotCampaign">Pilot Campaign Variant</option>
+                <option value="proposalDoc">Proposal / PDF</option>
+                <option value="productUi">Product UI</option>
+                <option value="socialMeta">Social / Metadata</option>
+              </select>
+              <div class="field-note">Investor Reference uses investors.veripura.com as the strongest tonal and structural baseline.</div>
+            </div>
+            <div class="input-group">
               <label for="reviewMode">Review Lens</label>
               <select id="reviewMode">
                 <option value="candidate" selected>Candidate Content</option>
                 <option value="reference">Reference VeriPura Asset</option>
               </select>
-              <div class="field-note">Use Candidate for outside material being tested against the brand. Use Reference for known VeriPura pages or assets.</div>
+              <div class="field-note">Candidate content is capped when identity proof is weak. Reference mode is more tolerant of incomplete fetches and missing optional metadata.</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="input-group">
+              <label for="docType">Source Content</label>
+              <select id="docType">
+                <option value="website">Website Page</option>
+                <option value="proposal">Proposal</option>
+                <option value="one-pager">One-Pager</option>
+                <option value="deck">Investor Deck</option>
+                <option value="pilot">Pilot Programme Document</option>
+                <option value="partner">Partner Programme Sheet</option>
+                <option value="case-study">Case Study</option>
+                <option value="email">Email</option>
+                <option value="social">Social Media Post</option>
+                <option value="ui">Product UI</option>
+                <option value="metadata">Metadata / Social Preview</option>
+                <option value="other">Other</option>
+              </select>
             </div>
             <div class="input-group">
               <label for="strictness">Audit Strictness</label>
@@ -723,7 +766,7 @@
             <div class="input-group">
               <label for="urlInput">Public Website URL</label>
               <input id="urlInput" type="url" placeholder="https://example.com" />
-              <div class="field-note">The app attempts direct retrieval first, then proxy fallback for publicly accessible pages. Some websites will still return partial HTML because of browser restrictions.</div>
+              <div class="field-note">The app attempts direct retrieval first, then proxy fallback. Partial HTML is possible and will be flagged.</div>
             </div>
           </div>
 
@@ -736,27 +779,9 @@
               <label for="textInput">Additional Text to Audit</label>
               <textarea id="textInput" placeholder="Paste website copy, proposal text, deck copy, metadata, alt text, button labels, or supporting content here."></textarea>
             </div>
-          </div>
-
-          <div class="row">
-            <div class="input-group">
-              <label for="docType">Source Content</label>
-              <select id="docType">
-                <option value="website">Website Page</option>
-                <option value="proposal">Proposal</option>
-                <option value="one-pager">One-Pager</option>
-                <option value="deck">Investor Deck</option>
-                <option value="pilot">Pilot Programme Document</option>
-                <option value="partner">Partner Programme Sheet</option>
-                <option value="case-study">Case Study</option>
-                <option value="email">Email</option>
-                <option value="social">Social Media Post</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
             <div class="input-group">
               <label for="benchmark">Benchmark Notes</label>
-              <input id="benchmark" type="text" placeholder="Optional: e.g. compare to current VeriPura investor site tone" />
+              <input id="benchmark" type="text" placeholder="Optional note: e.g. comparing to investor homepage or pilot-landing tone" />
             </div>
           </div>
 
@@ -773,14 +798,24 @@
           </div>
 
           <div class="explain-box">
-            <div class="mono-label">How scoring now works</div>
+            <div class="mono-label">Scoring model</div>
             <ul class="clean" style="margin-top:8px;">
-              <li><strong>Brand Match</strong> rewards actual VeriPura identity plus real system alignment.</li>
-              <li><strong>Execution Quality</strong> measures tone, structure, metadata, and accessibility.</li>
-              <li><strong>Candidate</strong> content is score-capped if identity proof is weak.</li>
-              <li><strong>Reference</strong> content is judged more lightly on optional technical metadata.</li>
+              <li><strong>Brand Match</strong> = identity + visual/system alignment to the selected profile.</li>
+              <li><strong>Execution Quality</strong> = tone, structure, metadata, accessibility, and publication readiness.</li>
+              <li><strong>Hard non-negotiables</strong> never relax across profiles.</li>
+              <li><strong>Pilot Campaign Variant</strong> allows stronger commercial framing without treating the page as off-brand by default.</li>
             </ul>
           </div>
+
+          <details class="profile-box">
+            <summary>Advanced: Active Brand Profile JSON</summary>
+            <div class="field-note" style="margin-bottom:10px;">You can edit the active profile JSON before running the audit. Invalid JSON will stop the audit.</div>
+            <textarea id="profileEditor" class="profile-code"></textarea>
+            <div class="actions" style="margin-top:12px;">
+              <button class="btn btn-light" id="resetProfileBtn" type="button">Reset Active Profile</button>
+              <button class="btn btn-quiet" id="copyProfileBtn" type="button">Copy Profile JSON</button>
+            </div>
+          </details>
 
           <div class="actions">
             <button class="btn btn-primary" id="analyzeBtn" type="button">Run Audit</button>
@@ -795,7 +830,7 @@
       <section class="panel">
         <div class="panel-header">
           <h2>Audit Results</h2>
-          <p>The output now distinguishes between genuine VeriPura brand match and general execution quality.</p>
+          <p>The output shows final score, profile fit, brand match, execution quality, caps, positives, findings, and profile-specific reasoning.</p>
         </div>
         <div class="panel-body">
           <div class="input-summary" id="inputSummary">
@@ -805,15 +840,17 @@
               <div class="summary-item"><span class="summary-label">Source</span><span id="summarySource">None</span></div>
               <div class="summary-item"><span class="summary-label">Source Content</span><span id="summaryContext">Website Page</span></div>
               <div class="summary-item"><span class="summary-label">Strictness</span><span id="summaryStrictness">Tight Standards</span></div>
+              <div class="summary-item"><span class="summary-label">Target Profile</span><span id="summaryProfile">Investor Reference</span></div>
               <div class="summary-item"><span class="summary-label">Review Lens</span><span id="summaryReviewMode">Candidate Content</span></div>
               <div class="summary-item"><span class="summary-label">Benchmark</span><span id="summaryBenchmark">None</span></div>
+              <div class="summary-item"><span class="summary-label">Primary Reference</span><span id="summaryReference">investors.veripura.com</span></div>
             </div>
           </div>
 
           <div style="height:16px"></div>
 
           <div class="filter-bar" id="filterBar">
-            <span class="mono-label" style="margin-right:4px;">Findings Filter</span>
+            <span class="mono-label" style="margin-right:4px;">Result Filter</span>
             <button class="filter-chip active" data-filter="all" type="button">All</button>
             <button class="filter-chip" data-filter="critical" type="button">Critical</button>
             <button class="filter-chip" data-filter="major" type="button">Major</button>
@@ -823,11 +860,12 @@
             <button class="filter-chip" data-filter="system" type="button">System</button>
             <button class="filter-chip" data-filter="tone" type="button">Tone</button>
             <button class="filter-chip" data-filter="technical" type="button">Technical</button>
+            <button class="filter-chip" data-filter="accessibility" type="button">Accessibility</button>
           </div>
 
           <div id="resultsPane">
             <div class="empty-state">
-              Upload a file, paste content, or enter a public website link, then run the audit. The tool will now produce a final score, Brand Match score, Execution Quality score, category table, positive proofs, violations, caps, and downloadable remediation reports.
+              Upload a file, paste content, or enter a public website link, then run the audit. This version is profile-aware and uses your style book, the investor reference, and a separate pilot-campaign variant.
             </div>
           </div>
         </div>
@@ -838,13 +876,13 @@
   <footer class="footer">
     <div class="container">
       <span class="mono-label">VeriPura Internal Tooling</span>
-      This auditor is designed for controlled brand review. Final publication decisions still require human review for layout fidelity, actual rendered styles, logo handling, imagery, and contrast.
+      This auditor is rule-driven and profile-aware, but it still cannot fully validate live rendered spacing, actual logo clear space, visual dominance of Gold, or real motion behavior without render-aware inspection.
     </div>
   </footer>
 
   <script>
     const PDFJS_WORKER = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.6.172/build/pdf.worker.min.js";
-    const STORAGE_KEY = "veripura_brand_auditor_last_audit_v6";
+    const STORAGE_KEY = "veripura_brand_auditor_profile_edition_v1";
 
     function getPdfJs() {
       if (window.pdfjsLib) {
@@ -854,86 +892,545 @@
       return null;
     }
 
-    const BRAND = {
-      colors: {
-        navy: "#0F2444",
-        navyMid: "#1F3864",
-        blue: "#2E5FA3",
-        blueLight: "#4A80C4",
-        sky: "#D6E4F0",
-        pale: "#EBF3FA",
-        cream: "#F8F9FB",
-        red: "#C8504A",
-        gold: "#D4A847",
-        white: "#FFFFFF",
-        ink: "#1A2332",
-        muted: "#5A6878",
-        border: "#CBD8E8"
+    const BRAND_PROFILES = {
+      core: {
+        meta: {
+          profileName: "Core Tight Standards",
+          referenceLabel: "Core style book rules",
+          primaryReference: "investors.veripura.com",
+          campaignReference: "veripura.com",
+          description: "Strict execution of the Tight Standards style book."
+        },
+        identity: {
+          requiredNames: ["veripura", "veri pura"],
+          positioningStatements: [
+            "pre-shipment food import compliance verification",
+            "structured pre-shipment compliance verification",
+            "documentation control",
+            "workflow clarity",
+            "traceability confidence",
+            "reduced border risk",
+            "cross-border risk reduction",
+            "trusted documentation intelligence layer",
+            "disciplined operational verification platform",
+            "professional assurance layer"
+          ],
+          strongTerms: [
+            "pre-shipment",
+            "verification",
+            "shipment readiness",
+            "documentation control",
+            "audit readiness",
+            "traceability",
+            "audit trail",
+            "cross-border",
+            "border risk",
+            "workflow intelligence",
+            "risk reduction",
+            "importer",
+            "processor",
+            "broker",
+            "detention",
+            "refusal"
+          ],
+          supportingTerms: [
+            "verify",
+            "review",
+            "validate",
+            "document",
+            "requirement",
+            "workflow",
+            "shipment",
+            "corridor",
+            "readiness",
+            "traceability",
+            "audit trail",
+            "risk exposure",
+            "refusal",
+            "detention",
+            "pre-shipment",
+            "importer",
+            "processor",
+            "broker",
+            "record",
+            "exception",
+            "status",
+            "submission"
+          ],
+          forbiddenPositioning: [
+            "broad lifestyle sustainability platform",
+            "speculative blockchain identity",
+            "trendy ai novelty brand",
+            "generic document management tool",
+            "casual logistics startup",
+            "consumer software",
+            "decorative fintech"
+          ]
+        },
+        voice: {
+          preferredTraits: [
+            "authoritative",
+            "calm",
+            "intelligent",
+            "methodical",
+            "exacting",
+            "composed",
+            "premium",
+            "technically fluent",
+            "commercially grounded",
+            "risk-aware"
+          ],
+          preferredVocabulary: [
+            "verify",
+            "review",
+            "validate",
+            "document",
+            "requirement",
+            "workflow",
+            "shipment",
+            "corridor",
+            "readiness",
+            "traceability",
+            "audit trail",
+            "risk exposure",
+            "refusal",
+            "detention",
+            "pre-shipment",
+            "importer",
+            "processor",
+            "broker",
+            "record",
+            "exception",
+            "status",
+            "submission"
+          ],
+          bannedWords: [
+            "revolutionize",
+            "revolutionary",
+            "game-changing",
+            "hypergrowth",
+            "frictionless",
+            "magical",
+            "viral",
+            "cutting-edge",
+            "seamless",
+            "next-gen",
+            "wow",
+            "rocketship",
+            "unstoppable"
+          ],
+          bannedPersonality: [
+            "playful",
+            "quirky",
+            "loud",
+            "trendy",
+            "flashy",
+            "swaggering",
+            "breathless",
+            "overfriendly",
+            "disruptive",
+            "crypto-hype",
+            "startup-casual",
+            "juvenile",
+            "casual",
+            "hypey",
+            "vague",
+            "inflated"
+          ],
+          punctuationRules: {
+            discourageExclamation: true,
+            discourageDramaticPunctuation: true
+          }
+        },
+        typography: {
+          primaryBody: ["dm sans"],
+          primaryHeadline: ["dm serif display"],
+          utility: ["dm mono"],
+          bodyRequired: true,
+          headlinePreferred: true,
+          utilityOptional: true,
+          paragraphMonoForbidden: true
+        },
+        palette: {
+          requiredCore: ["#0f2444", "#f8f9fb", "#ebf3fa"],
+          preferredSupport: ["#1f3864", "#2e5fa3", "#4a80c4", "#d4a847", "#c8504a", "#ffffff", "#1a2332", "#5a6878", "#cbd8e8"],
+          minimumCoreHits: 2,
+          navyRequiredForTrustZones: true,
+          goldAsAccentOnly: true,
+          redFunctionalOnly: true,
+          allowOnlyBlueFamilyGradients: true
+        },
+        cta: {
+          approved: [
+            "request a pilot review",
+            "book a verification call",
+            "review the programme",
+            "request a review",
+            "review the workflow",
+            "request verification"
+          ],
+          weak: [
+            "get started",
+            "learn more now",
+            "join the revolution",
+            "unlock growth",
+            "see the magic",
+            "try it free",
+            "let's go",
+            "buy now"
+          ],
+          primaryStyle: "gold fill, navy text, compact, controlled"
+        },
+        technical: {
+          titleRequired: true,
+          descriptionPreferred: true,
+          ogPreferred: true,
+          twitterPreferred: false,
+          altTextPreferred: true,
+          linkRecognizabilityRequired: true
+        },
+        design: {
+          badVisualSignals: [
+            "backdrop-filter",
+            "neon",
+            "bounce",
+            "spin",
+            "flash",
+            "rotate(",
+            "glass",
+            "glow",
+            "blob",
+            "parallax"
+          ],
+          discouragedSignals: [
+            "box-shadow: 0 20px",
+            "text-shadow",
+            "heavy gradient",
+            "rainbow",
+            "hologram"
+          ],
+          allowedMotion: [
+            "subtle hover emphasis",
+            "gentle opacity",
+            "restrained shimmer",
+            "soft pulse",
+            "controlled transitions"
+          ],
+          badMotion: [
+            "bounce",
+            "spring",
+            "flashing",
+            "loop",
+            "parallax"
+          ]
+        },
+        assetRules: {
+          website: {
+            requiredSignals: ["verification", "documentation", "risk", "pre-shipment"],
+            preferredSignals: ["shipment readiness", "workflow", "traceability"]
+          },
+          deck: {
+            requiredSignals: ["problem", "solution", "risk"],
+            preferredSignals: ["market", "workflow", "compliance", "verification"],
+            darkTitleSlidePreferred: true,
+            restrainedChartsRequired: true
+          },
+          proposal: {
+            requiredSignals: ["scope", "process", "deliverable"],
+            preferredSignals: ["timeline", "review", "verification"]
+          },
+          pilot: {
+            requiredSignals: ["scope", "process", "timeline", "deliverable"],
+            preferredSignals: ["review discipline", "verification", "workflow"]
+          },
+          "one-pager": {
+            requiredSignals: ["headline", "evidence"],
+            preferredSignals: ["clarity", "scannability"]
+          },
+          "case-study": {
+            requiredSignals: ["context", "approach", "outcome"],
+            preferredSignals: ["challenge", "verification", "next-step implication"]
+          },
+          ui: {
+            requiredSignals: ["status", "review", "document", "missing", "workflow"],
+            preferredSignals: ["traceability", "exception", "submission"]
+          },
+          metadata: {
+            requiredSignals: ["veripura"],
+            preferredSignals: ["verification", "shipment readiness", "documentation control"]
+          },
+          social: {
+            maxLength: 2200,
+            concisePreferred: true
+          }
+        },
+        weights: {
+          identity: 30,
+          system: 25,
+          tone: 20,
+          technical: 15,
+          accessibility: 10
+        },
+        scoreCaps: {
+          candidate: [
+            { maxIdentityPct: 19, cap: 55, reason: "Very weak VeriPura identity proof" },
+            { maxIdentityPct: 39, cap: 70, reason: "Weak VeriPura identity proof" },
+            { maxIdentityPct: 59, cap: 82, reason: "Moderate but incomplete VeriPura identity proof" }
+          ]
+        }
       },
-      identity: {
-        brandNames: ["veripura", "veri pura"],
-        strongTerms: [
-          "pre-shipment compliance verification",
-          "shipment readiness",
-          "documentation control",
-          "document verification",
-          "traceability",
-          "corridor risk",
-          "border risk",
-          "pre-shipment review",
-          "compliance verification",
-          "shipment documentation"
-        ],
-        mediumTerms: [
-          "compliance",
-          "verification",
-          "document",
-          "documentation",
-          "audit trail",
-          "shipment",
-          "customs",
-          "broker",
-          "import",
-          "border",
-          "readiness",
-          "risk",
-          "traceability",
-          "review",
-          "validate"
-        ],
-        approvedCtas: [
-          "request a pilot review",
-          "book a verification call",
-          "review the programme",
-          "request a review",
-          "book a call",
-          "review the pilot",
-          "see the workflow",
-          "review the workflow",
-          "request verification"
-        ]
+
+      investor: {
+        extends: "core",
+        meta: {
+          profileName: "Investor Reference",
+          referenceLabel: "Primary reference: investors.veripura.com",
+          primaryReference: "investors.veripura.com",
+          description: "Investor-facing profile. Serious, evidence-led, commercially disciplined, restrained."
+        },
+        voice: {
+          preferredVocabulary: [
+            "verification",
+            "risk",
+            "readiness",
+            "documentation",
+            "workflow",
+            "audit trail",
+            "border risk",
+            "enterprise",
+            "commercial",
+            "discipline",
+            "control",
+            "evidence"
+          ],
+          bannedWords: [
+            "revolution",
+            "revolutionary",
+            "magic",
+            "viral",
+            "frictionless",
+            "hypergrowth",
+            "moonshot",
+            "explosive"
+          ]
+        },
+        cta: {
+          approved: [
+            "book a verification call",
+            "review the programme",
+            "request a pilot review",
+            "request a review"
+          ],
+          weak: [
+            "get started",
+            "buy now",
+            "try it free",
+            "let's go"
+          ]
+        },
+        assetRules: {
+          deck: {
+            requiredSignals: ["problem", "solution", "risk"],
+            preferredSignals: ["market", "workflow", "commercial", "enterprise", "compliance", "verification", "auditability"]
+          },
+          website: {
+            requiredSignals: ["verification", "risk", "documentation", "enterprise"],
+            preferredSignals: ["shipment readiness", "workflow", "audit trail", "cross-border"]
+          }
+        }
       },
-      toneGood: [
-        "compliance", "verification", "document", "documentation", "traceability", "audit", "audit trail",
-        "pre-shipment", "shipment", "risk", "workflow", "readiness", "border", "import", "requirement",
-        "review", "validate", "customs", "broker", "corridor", "control", "evidence", "operational"
-      ],
-      toneBad: [
-        "revolutionary", "game-changing", "frictionless", "magical", "viral", "cutting-edge",
-        "disruptive", "next-gen", "hypergrowth", "seamless", "amazing", "incredible",
-        "unstoppable", "rocketship", "blazing fast", "wow", "transform your business overnight"
-      ],
-      forbiddenTone: [
-        "playful", "fun", "quirky", "youthful", "lifestyle", "whimsical", "flashy", "noisy", "trendy"
-      ],
-      ctaWeak: [
-        "get started", "learn more now", "join the revolution", "unlock growth", "see the magic",
-        "try it free", "let's go", "buy now"
-      ],
-      badVisualSignals: [
-        "backdrop-filter", "neon", "bounce", "spin", "flash", "rotate(", "glass", "text-shadow"
-      ]
+
+      pilotCampaign: {
+        extends: "core",
+        meta: {
+          profileName: "Pilot Campaign Variant",
+          referenceLabel: "Approved campaign variant: veripura.com",
+          primaryReference: "veripura.com",
+          description: "Commercial pilot-participation landing-page variant. Allows stronger campaign framing but not hype chaos."
+        },
+        voice: {
+          preferredVocabulary: [
+            "pilot",
+            "review",
+            "verification",
+            "programme",
+            "readiness",
+            "documentation",
+            "shipment",
+            "control",
+            "cross-border"
+          ],
+          bannedWords: [
+            "magical",
+            "viral",
+            "rocketship",
+            "unstoppable",
+            "moonshot"
+          ]
+        },
+        cta: {
+          approved: [
+            "request a pilot review",
+            "book a verification call",
+            "review the programme",
+            "join the pilot",
+            "request pilot participation"
+          ],
+          weak: [
+            "buy now",
+            "let's go",
+            "join the revolution",
+            "see the magic"
+          ]
+        },
+        assetRules: {
+          website: {
+            requiredSignals: ["pilot", "verification", "documentation"],
+            preferredSignals: ["programme", "review", "readiness", "risk", "shipment"]
+          },
+          pilot: {
+            requiredSignals: ["pilot", "scope", "process", "timeline", "deliverable"],
+            preferredSignals: ["review", "verification", "partner", "workflow"]
+          }
+        },
+        scoreCaps: {
+          candidate: [
+            { maxIdentityPct: 19, cap: 60, reason: "Very weak VeriPura identity proof even under pilot campaign variant" },
+            { maxIdentityPct: 39, cap: 75, reason: "Weak VeriPura identity proof under pilot campaign variant" }
+          ]
+        }
+      },
+
+      proposalDoc: {
+        extends: "core",
+        meta: {
+          profileName: "Proposal / PDF",
+          referenceLabel: "Proposal-grade seriousness",
+          primaryReference: "Core Tight Standards",
+          description: "Formal document profile for proposals, partner sheets, one-pagers, and PDFs."
+        },
+        assetRules: {
+          proposal: {
+            requiredSignals: ["scope", "process", "deliverable"],
+            preferredSignals: ["timeline", "review", "verification", "structure"]
+          },
+          partner: {
+            requiredSignals: ["programme", "review", "structure"],
+            preferredSignals: ["verification", "benefit", "scope"]
+          },
+          "one-pager": {
+            requiredSignals: ["headline", "evidence"],
+            preferredSignals: ["clarity", "scannability", "structure"]
+          }
+        }
+      },
+
+      productUi: {
+        extends: "core",
+        meta: {
+          profileName: "Product UI",
+          referenceLabel: "Operational workspace profile",
+          primaryReference: "Core Tight Standards",
+          description: "Product interface profile emphasizing status clarity, form clarity, document orientation, and anti-gamification."
+        },
+        voice: {
+          preferredVocabulary: [
+            "review status",
+            "missing documents",
+            "submission",
+            "exception",
+            "status",
+            "record",
+            "traceability",
+            "review",
+            "awaiting",
+            "flagged",
+            "rejected"
+          ],
+          bannedWords: [
+            "how it's going",
+            "things needed",
+            "awesome",
+            "fun",
+            "magic"
+          ]
+        },
+        assetRules: {
+          ui: {
+            requiredSignals: ["status", "review", "document", "missing", "workflow", "record"],
+            preferredSignals: ["submission", "exception", "awaiting", "flagged", "rejected"]
+          }
+        }
+      },
+
+      socialMeta: {
+        extends: "core",
+        meta: {
+          profileName: "Social / Metadata",
+          referenceLabel: "Metadata and social preview discipline",
+          primaryReference: "Core Tight Standards",
+          description: "For page titles, descriptions, OGP, alt text, and short-form brand copy."
+        },
+        technical: {
+          titleRequired: true,
+          descriptionPreferred: true,
+          ogPreferred: true,
+          twitterPreferred: true,
+          altTextPreferred: true,
+          linkRecognizabilityRequired: true
+        },
+        assetRules: {
+          metadata: {
+            requiredSignals: ["veripura"],
+            preferredSignals: ["verification", "documentation", "shipment readiness", "documentation control"]
+          },
+          social: {
+            maxLength: 1200,
+            concisePreferred: true
+          }
+        }
+      }
     };
+
+    function deepClone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function mergeDeep(base, override) {
+      const result = deepClone(base);
+      const source = deepClone(override);
+
+      function assign(target, src) {
+        for (const key of Object.keys(src)) {
+          const srcVal = src[key];
+          const tgtVal = target[key];
+
+          if (Array.isArray(srcVal)) {
+            target[key] = srcVal;
+          } else if (srcVal && typeof srcVal === "object") {
+            if (!tgtVal || typeof tgtVal !== "object" || Array.isArray(tgtVal)) {
+              target[key] = {};
+            }
+            assign(target[key], srcVal);
+          } else {
+            target[key] = srcVal;
+          }
+        }
+      }
+
+      assign(result, source);
+      return result;
+    }
+
+    function resolveProfile(profileKey) {
+      const raw = BRAND_PROFILES[profileKey];
+      if (!raw) return null;
+      if (!raw.extends) return deepClone(raw);
+      const parent = resolveProfile(raw.extends);
+      const merged = mergeDeep(parent, raw);
+      delete merged.extends;
+      return merged;
+    }
 
     const state = {
       mode: "document",
@@ -950,6 +1447,7 @@
 
     const els = {
       modeSwitcher: document.getElementById("modeSwitcher"),
+      targetProfile: document.getElementById("targetProfile"),
       reviewMode: document.getElementById("reviewMode"),
       fileFields: document.getElementById("fileFields"),
       urlFields: document.getElementById("urlFields"),
@@ -960,6 +1458,9 @@
       docType: document.getElementById("docType"),
       strictness: document.getElementById("strictness"),
       benchmark: document.getElementById("benchmark"),
+      profileEditor: document.getElementById("profileEditor"),
+      resetProfileBtn: document.getElementById("resetProfileBtn"),
+      copyProfileBtn: document.getElementById("copyProfileBtn"),
       resultsPane: document.getElementById("resultsPane"),
       analyzeBtn: document.getElementById("analyzeBtn"),
       clearBtn: document.getElementById("clearBtn"),
@@ -973,8 +1474,10 @@
       summarySource: document.getElementById("summarySource"),
       summaryContext: document.getElementById("summaryContext"),
       summaryStrictness: document.getElementById("summaryStrictness"),
+      summaryProfile: document.getElementById("summaryProfile"),
       summaryReviewMode: document.getElementById("summaryReviewMode"),
       summaryBenchmark: document.getElementById("summaryBenchmark"),
+      summaryReference: document.getElementById("summaryReference"),
       diagPdf: document.getElementById("diagPdf"),
       diagDocx: document.getElementById("diagDocx"),
       diagStorage: document.getElementById("diagStorage"),
@@ -1018,11 +1521,11 @@
     }
 
     function containsAny(text, terms) {
-      return terms.some(term => text.includes(term.toLowerCase()));
+      return terms.some(term => text.includes(String(term).toLowerCase()));
     }
 
     function countHits(text, terms) {
-      return terms.filter(term => text.includes(term.toLowerCase()));
+      return (terms || []).filter(term => text.includes(String(term).toLowerCase()));
     }
 
     function findContext(text, term, context = 90) {
@@ -1077,13 +1580,29 @@
       els.diagSource.textContent = state.sourceName || "None";
     }
 
+    function refreshProfileEditor() {
+      const profile = resolveProfile(els.targetProfile.value);
+      els.profileEditor.value = JSON.stringify(profile, null, 2);
+    }
+
+    function getActiveProfile() {
+      try {
+        return JSON.parse(els.profileEditor.value);
+      } catch {
+        throw new Error("Active profile JSON is invalid.");
+      }
+    }
+
     function updateSummary() {
+      const resolved = resolveProfile(els.targetProfile.value);
       els.summaryMode.textContent = labelize(state.mode);
       els.summarySource.textContent = state.sourceName || "Manual / None";
       els.summaryContext.textContent = labelize(els.docType.value);
       els.summaryStrictness.textContent = labelize(els.strictness.value);
+      els.summaryProfile.textContent = resolved?.meta?.profileName || labelize(els.targetProfile.value);
       els.summaryReviewMode.textContent = labelize(els.reviewMode.value);
       els.summaryBenchmark.textContent = els.benchmark.value.trim() || "None";
+      els.summaryReference.textContent = resolved?.meta?.primaryReference || "None";
       updateDiagnostics();
     }
 
@@ -1121,6 +1640,8 @@
         els.urlInput.value = "";
         els.benchmark.value = "";
         els.reviewMode.value = "candidate";
+        els.targetProfile.value = "investor";
+        refreshProfileEditor();
       }
 
       [...els.filterBar.querySelectorAll(".filter-chip")].forEach(btn => {
@@ -1133,7 +1654,7 @@
     function resetResultsPane() {
       els.resultsPane.innerHTML = `
         <div class="empty-state">
-          Upload a file, paste content, or enter a public website link, then run the audit. The tool will now produce a final score, Brand Match score, Execution Quality score, category table, positive proofs, violations, caps, and downloadable remediation reports.
+          Upload a file, paste content, or enter a public website link, then run the audit. This version is profile-aware and uses your style book, the investor reference, and a separate pilot-campaign variant.
         </div>
       `;
     }
@@ -1271,8 +1792,6 @@
         buttons: [...doc.querySelectorAll('button, input[type="button"], input[type="submit"], a[role="button"]')]
           .map(el => normalizeWhitespace(el.value || el.textContent || ""))
           .filter(Boolean),
-        bodyClasses: doc.body?.getAttribute("class") || "",
-        headHtml: doc.head?.innerHTML || "",
         rawStyleSignals: allMarkup,
         textContent: normalizeWhitespace(doc.body?.innerText || "")
       };
@@ -1291,17 +1810,18 @@
       }
     }
 
-    function buildCategoryModel() {
+    function buildCategoryModel(weights) {
       return {
-        identity: { max: 30, score: 0 },
-        system: { max: 25, score: 0 },
-        tone: { max: 20, score: 0 },
-        technical: { max: 15, score: 0 },
-        accessibility: { max: 10, score: 0 }
+        identity: { max: weights.identity, score: 0 },
+        system: { max: weights.system, score: 0 },
+        tone: { max: weights.tone, score: 0 },
+        technical: { max: weights.technical, score: 0 },
+        accessibility: { max: weights.accessibility, score: 0 }
       };
     }
 
     function analyze() {
+      const profile = getActiveProfile();
       const manualText = (els.textInput.value || "").trim();
       tryParseRawHtmlFromText(manualText);
 
@@ -1322,7 +1842,7 @@
       const sourceContent = els.docType.value;
       const strictness = els.strictness.value;
 
-      const categories = buildCategoryModel();
+      const categories = buildCategoryModel(profile.weights);
       const findings = [];
       const positives = [];
       const caps = [];
@@ -1370,15 +1890,21 @@
         warnings.push(text);
       }
 
+      function getAssetRule(contentType) {
+        return profile.assetRules?.[contentType] || null;
+      }
+
       function scoreIdentity() {
-        const brandHits = countHits(textLower, BRAND.identity.brandNames);
-        const strongHits = countHits(textLower, BRAND.identity.strongTerms);
-        const mediumHits = countHits(textLower, BRAND.identity.mediumTerms);
+        const brandHits = countHits(textLower, profile.identity.requiredNames || []);
+        const posHits = countHits(textLower, profile.identity.positioningStatements || []);
+        const strongHits = countHits(textLower, profile.identity.strongTerms || []);
+        const supportHits = countHits(textLower, profile.identity.supportingTerms || []);
+        const forbiddenPositioningHits = countHits(textLower, profile.identity.forbiddenPositioning || []);
 
         if (brandHits.length) {
-          addPoints("identity", 12, {
+          addPoints("identity", 10, {
             title: "VeriPura brand name detected",
-            explanation: "The source explicitly references VeriPura, which is a strong identity signal.",
+            explanation: "The source explicitly names VeriPura, which is the strongest basic identity signal.",
             snippet: findContext(normalized, brandHits[0]).snippet,
             matchText: brandHits[0]
           });
@@ -1387,197 +1913,232 @@
             category: "identity",
             severity: "critical",
             title: "No explicit VeriPura brand name detected",
-            explanation: "Candidate material should not score highly as VeriPura-compliant if it never names VeriPura at all.",
-            suggestion: "Introduce VeriPura naming in the title, headline, navigation, footer, or core body copy where appropriate.",
+            explanation: "Candidate content should not score highly as VeriPura-compliant if it never names VeriPura at all.",
+            suggestion: "Introduce VeriPura naming in the page title, headline, footer, or core body copy where appropriate.",
             snippet: normalized.slice(0, 220)
           });
         }
 
-        if (strongHits.length >= 3) {
-          addPoints("identity", 12, {
+        if (posHits.length >= 2) {
+          addPoints("identity", 10, {
             title: "Strong VeriPura positioning language detected",
-            explanation: "The material uses multiple high-signal phrases that align with VeriPura’s positioning.",
-            snippet: findContext(normalized, strongHits[0]).snippet,
-            matchText: strongHits[0]
+            explanation: "The source uses multiple high-signal positioning statements aligned with the style book.",
+            snippet: findContext(normalized, posHits[0]).snippet,
+            matchText: posHits[0]
           });
-        } else if (strongHits.length >= 1) {
-          addPoints("identity", 7, {
-            title: "Some VeriPura positioning language detected",
-            explanation: "The material shows at least one strong positioning phrase associated with VeriPura.",
-            snippet: findContext(normalized, strongHits[0]).snippet,
-            matchText: strongHits[0]
+        } else if (posHits.length >= 1) {
+          addPoints("identity", 6, {
+            title: "Some explicit VeriPura positioning language detected",
+            explanation: "The source includes at least one direct positioning statement aligned with VeriPura.",
+            snippet: findContext(normalized, posHits[0]).snippet,
+            matchText: posHits[0]
           });
         } else {
           addFinding({
             category: "identity",
             severity: reviewMode === "candidate" ? "major" : "minor",
-            title: "Strong VeriPura positioning language is weak or absent",
-            explanation: "The material does not show enough distinctive VeriPura language beyond generic compliance terminology.",
-            suggestion: "Use stronger brand-specific phrasing such as pre-shipment compliance verification, shipment readiness, documentation control, or corridor risk.",
-            snippet: normalized.slice(0, 220)
+            title: "Explicit positioning language is weak or absent",
+            explanation: "The source does not strongly state structured pre-shipment verification, documentation control, workflow clarity, or border-risk reduction.",
+            suggestion: "Use clearer VeriPura positioning language based on the style book and selected profile.",
+            snippet: normalized.slice(0, 240)
           });
         }
 
-        if (mediumHits.length >= 6) {
-          addPoints("identity", 6, {
-            title: "Relevant operational vocabulary is present",
-            explanation: "The copy uses multiple terms aligned with compliance, verification, shipment, or documentation workflows.",
-            snippet: findContext(normalized, mediumHits[0]).snippet,
-            matchText: mediumHits[0]
+        if (strongHits.length >= 5) {
+          addPoints("identity", 7, {
+            title: "Strong identity vocabulary density detected",
+            explanation: "The source contains multiple high-signal terms associated with VeriPura’s category and role.",
+            snippet: findContext(normalized, strongHits[0]).snippet,
+            matchText: strongHits[0]
           });
-        } else if (mediumHits.length >= 3) {
-          addPoints("identity", 3, {
-            title: "Some relevant operational vocabulary is present",
-            explanation: "The copy includes several relevant terms, though still not enough on its own to prove brand identity.",
-            snippet: findContext(normalized, mediumHits[0]).snippet,
-            matchText: mediumHits[0]
-          });
-        }
-
-        const approvedCtaHits = [...(meta.buttons || []), ...(meta.links || [])]
-          .map(t => t.toLowerCase())
-          .filter(t => BRAND.identity.approvedCtas.some(term => t.includes(term)));
-
-        if (approvedCtaHits.length) {
+        } else if (strongHits.length >= 2) {
           addPoints("identity", 4, {
-            title: "Approved CTA pattern detected",
-            explanation: "Specific, controlled CTA language aligns with VeriPura’s operational positioning.",
-            snippet: approvedCtaHits.slice(0, 3).join(", "),
-            matchText: approvedCtaHits[0]
+            title: "Some strong identity vocabulary detected",
+            explanation: "The source contains several strong category terms, though not enough on their own to prove full brand fit.",
+            snippet: findContext(normalized, strongHits[0]).snippet,
+            matchText: strongHits[0]
           });
         }
+
+        if (supportHits.length >= 8) {
+          addPoints("identity", 3, {
+            title: "Supporting operational vocabulary is present",
+            explanation: "The source uses relevant operational and compliance-related language in a credible density.",
+            snippet: findContext(normalized, supportHits[0]).snippet,
+            matchText: supportHits[0]
+          });
+        }
+
+        forbiddenPositioningHits.forEach(term => {
+          addFinding({
+            category: "identity",
+            severity: "major",
+            title: `Forbidden positioning cue detected: “${term}”`,
+            explanation: "The style book explicitly excludes this positioning direction for VeriPura.",
+            suggestion: "Remove the off-positioning cue and reframe the source around verification, documentation control, workflow clarity, and border-risk reduction.",
+            snippet: findContext(normalized, term).snippet,
+            matchText: term
+          });
+        });
       }
 
       function scoreSystem() {
-        const usesDmSans =
-          /font-family:[^;}{]*dm sans/.test(rawSignals) ||
-          rawSignals.includes("family=dm+sans") ||
-          rawSignals.includes("dm sans");
+        const typo = profile.typography || {};
+        const palette = profile.palette || {};
+        const design = profile.design || {};
+        const ctaRules = profile.cta || {};
 
-        const usesDmSerif =
-          /font-family:[^;}{]*dm serif display/.test(rawSignals) ||
-          rawSignals.includes("family=dm+serif+display") ||
-          rawSignals.includes("dm serif display");
+        const usesBody =
+          (typo.primaryBody || []).some(f => rawSignals.includes(f)) ||
+          (typo.primaryBody || []).some(f => htmlLower.includes(f));
 
-        const usesDmMono =
-          /font-family:[^;}{]*dm mono/.test(rawSignals) ||
-          rawSignals.includes("family=dm+mono") ||
-          rawSignals.includes("dm mono");
+        const usesHeadline =
+          (typo.primaryHeadline || []).some(f => rawSignals.includes(f)) ||
+          (typo.primaryHeadline || []).some(f => htmlLower.includes(f));
 
-        if (usesDmSans) {
+        const usesUtility =
+          (typo.utility || []).some(f => rawSignals.includes(f)) ||
+          (typo.utility || []).some(f => htmlLower.includes(f));
+
+        if (usesBody) {
           addPoints("system", 8, {
-            title: "DM Sans detected",
-            explanation: "DM Sans appears in the source and supports the working type system.",
-            snippet: "DM Sans detected in markup or style signals.",
-            matchText: "dm sans"
+            title: "Primary body typeface detected",
+            explanation: "The source appears to use the approved operating typeface for readable working text.",
+            snippet: (typo.primaryBody || []).join(", "),
+            matchText: (typo.primaryBody || [])[0] || ""
           });
-        } else {
+        } else if (typo.bodyRequired) {
           addFinding({
             category: "system",
             severity: "major",
-            title: "DM Sans not detected",
-            explanation: "DM Sans is the primary working typeface for body copy and interface text.",
-            suggestion: "Use DM Sans for body copy, labels, UI text, and controls.",
-            snippet: "DM Sans was not detected in the inspected source."
+            title: "Primary body typeface not detected",
+            explanation: "The approved body type system is not clearly present in the inspected source.",
+            suggestion: "Use DM Sans for body copy, labels, interface text, and operating text.",
+            snippet: "Primary body typeface not detected."
           });
         }
 
-        if (usesDmSerif) {
-          addPoints("system", 7, {
-            title: "DM Serif Display detected",
-            explanation: "DM Serif Display supports VeriPura headline authority and editorial contrast.",
-            snippet: "DM Serif Display detected in markup or style signals.",
-            matchText: "dm serif display"
+        if (usesHeadline) {
+          addPoints("system", 6, {
+            title: "Headline typeface detected",
+            explanation: "The source appears to include the approved authority headline face.",
+            snippet: (typo.primaryHeadline || []).join(", "),
+            matchText: (typo.primaryHeadline || [])[0] || ""
           });
-        } else {
+        } else if (typo.headlinePreferred) {
           addFinding({
             category: "system",
             severity: reviewMode === "reference" ? "minor" : "major",
-            title: "DM Serif Display not detected",
-            explanation: "The serif display layer supports the intended VeriPura hierarchy for key headlines.",
-            suggestion: "Use DM Serif Display for hero headlines, section headlines, and selected emphasis statements.",
-            snippet: "DM Serif Display was not detected in the inspected source."
+            title: "Headline typeface not detected",
+            explanation: "The approved display typeface is not clearly present in the inspected source.",
+            suggestion: "Use DM Serif Display for hero headlines, section dividers, and premium emphasis where appropriate.",
+            snippet: "Headline typeface not detected."
           });
         }
 
-        if (usesDmMono) {
+        if (usesUtility) {
           addPoints("system", 2, {
-            title: "DM Mono detected",
-            explanation: "DM Mono reinforces metadata, eyebrow, and utility-label styling.",
-            snippet: "DM Mono detected in markup or style signals.",
-            matchText: "dm mono"
+            title: "Utility typeface detected",
+            explanation: "The source includes the approved utility/system type layer.",
+            snippet: (typo.utility || []).join(", "),
+            matchText: (typo.utility || [])[0] || ""
           });
         }
 
-        const paletteTokens = Object.values(BRAND.colors).map(c => c.toLowerCase());
-        const paletteHits = paletteTokens.filter(c => rawSignals.includes(c));
+        const coreHits = (palette.requiredCore || []).filter(c => rawSignals.includes(c.toLowerCase()));
+        const supportHits = (palette.preferredSupport || []).filter(c => rawSignals.includes(c.toLowerCase()));
 
-        if (paletteHits.length >= 5) {
-          addPoints("system", 6, {
-            title: "Strong brand palette signal detected",
-            explanation: "Multiple approved palette tokens appear in the source.",
-            snippet: paletteHits.slice(0, 5).join(", "),
-            matchText: paletteHits[0]
-          });
-        } else if (paletteHits.length >= 3) {
-          addPoints("system", 3, {
-            title: "Some brand palette signal detected",
-            explanation: "Several approved palette tokens appear, though coverage is not strong.",
-            snippet: paletteHits.slice(0, 3).join(", "),
-            matchText: paletteHits[0]
+        if (coreHits.length >= (palette.minimumCoreHits || 2)) {
+          addPoints("system", 5, {
+            title: "Core brand palette detected",
+            explanation: "The source includes enough core palette tokens to suggest real brand alignment.",
+            snippet: coreHits.join(", "),
+            matchText: coreHits[0] || ""
           });
         } else {
           addFinding({
             category: "system",
             severity: reviewMode === "candidate" ? "major" : "minor",
-            title: "Weak evidence of VeriPura palette discipline",
-            explanation: "The inspected source does not show strong evidence of the approved palette.",
-            suggestion: "Anchor trust areas in Navy, use Pale/Cream for surfaces, and reserve Gold for controlled emphasis.",
-            snippet: "Few approved palette tokens were detected in the inspected source."
+            title: "Weak evidence of core palette usage",
+            explanation: "The inspected source does not show enough of the core VeriPura palette.",
+            suggestion: "Use Navy as the trust anchor, Cream/Pale as document surfaces, and Gold as restrained action emphasis.",
+            snippet: "Insufficient core palette hits detected."
           });
         }
 
-        if (rawSignals.includes(BRAND.colors.navy.toLowerCase())) {
+        if (supportHits.length >= 4) {
+          addPoints("system", 3, {
+            title: "Supporting palette discipline detected",
+            explanation: "The source includes multiple approved supporting tokens from the style system.",
+            snippet: supportHits.slice(0, 6).join(", "),
+            matchText: supportHits[0] || ""
+          });
+        }
+
+        if (palette.navyRequiredForTrustZones && rawSignals.includes("#0f2444")) {
           addPoints("system", 2, {
             title: "Primary Navy anchor detected",
-            explanation: "Navy is the core trust anchor in the VeriPura visual system.",
-            snippet: BRAND.colors.navy,
-            matchText: BRAND.colors.navy
+            explanation: "The source includes the brand’s primary trust anchor.",
+            snippet: "#0F2444",
+            matchText: "#0F2444"
           });
         }
 
-        const ctaTexts = [...(meta.buttons || []), ...(meta.links || []).filter(t => t.length <= 40)].map(t => t.toLowerCase());
-        const weakCtas = ctaTexts.filter(t => BRAND.ctaWeak.some(term => t.includes(term)));
-        const goodCtas = ctaTexts.filter(t => BRAND.identity.approvedCtas.some(term => t.includes(term)));
+        if (palette.goldAsAccentOnly && rawSignals.includes("#d4a847")) {
+          addPoints("system", 1, {
+            title: "Gold accent detected",
+            explanation: "The source includes the controlled action/emphasis accent used by the brand.",
+            snippet: "#D4A847",
+            matchText: "#D4A847"
+          });
+        }
+
+        const ctaTexts = [...(meta.buttons || []), ...(meta.links || []).filter(t => t.length <= 50)].map(t => t.toLowerCase());
+        const goodCtas = ctaTexts.filter(t => (ctaRules.approved || []).some(term => t.includes(term)));
+        const weakCtas = ctaTexts.filter(t => (ctaRules.weak || []).some(term => t.includes(term)));
 
         if (goodCtas.length) {
-          addPoints("system", 2, {
-            title: "Controlled CTA language detected",
-            explanation: "CTA language appears specific and operational rather than generic consumer SaaS language.",
-            snippet: goodCtas.slice(0, 3).join(", "),
-            matchText: goodCtas[0]
+          addPoints("system", 3, {
+            title: "Approved CTA language detected",
+            explanation: "The source uses profile-aligned CTA wording.",
+            snippet: goodCtas.slice(0, 4).join(", "),
+            matchText: goodCtas[0] || ""
           });
         }
 
-        if (weakCtas.length) {
+        weakCtas.forEach(term => {
           addFinding({
             category: "system",
             severity: "major",
-            title: "Weak or generic CTA language detected",
-            explanation: "VeriPura CTAs should be controlled, specific, and operationally credible.",
-            suggestion: "Use labels such as Request a Pilot Review, Book a Verification Call, or Review the Programme.",
-            snippet: weakCtas.slice(0, 6).join(", ")
+            title: `Weak or generic CTA detected: “${term}”`,
+            explanation: "This CTA language is too generic or off-pattern for the selected profile.",
+            suggestion: `Use approved CTA language such as ${ (ctaRules.approved || []).slice(0,3).join(", ") }.`,
+            snippet: term,
+            matchText: term
           });
-        }
+        });
 
-        BRAND.badVisualSignals.forEach(signal => {
+        (design.badVisualSignals || []).forEach(signal => {
           if (rawSignals.includes(signal.toLowerCase())) {
             addFinding({
               category: "system",
               severity: "minor",
               title: `Potential off-brand visual signal detected: ${signal}`,
-              explanation: "The VeriPura system avoids novelty-heavy visual effects and decorative theatrics.",
+              explanation: "The style system rejects decorative or novelty-heavy visual behavior of this kind.",
               suggestion: "Remove or reduce the effect to a restrained enterprise-grade treatment.",
+              snippet: signal
+            });
+          }
+        });
+
+        (design.discouragedSignals || []).forEach(signal => {
+          if (rawSignals.includes(signal.toLowerCase())) {
+            addFinding({
+              category: "system",
+              severity: "minor",
+              title: `Discouraged visual signal detected: ${signal}`,
+              explanation: "This signal can weaken the controlled, audit-aware visual posture.",
+              suggestion: "Replace the effect with cleaner borders, spacing, or restrained tonal contrast.",
               snippet: signal
             });
           }
@@ -1585,31 +2146,32 @@
       }
 
       function scoreTone() {
-        const badToneHits = countHits(textLower, BRAND.toneBad);
-        const forbiddenToneHits = countHits(textLower, BRAND.forbiddenTone);
-        const goodToneHits = countHits(textLower, BRAND.toneGood);
+        const voice = profile.voice || {};
+        const badToneHits = countHits(textLower, voice.bannedWords || []);
+        const forbiddenPersonalityHits = countHits(textLower, voice.bannedPersonality || []);
+        const preferredHits = countHits(textLower, voice.preferredVocabulary || []);
 
-        if (goodToneHits.length >= 8) {
-          addPoints("tone", 10, {
-            title: "Strong operational tone detected",
-            explanation: "The copy uses a strong mix of compliance, verification, documentation, and workflow language.",
-            snippet: findContext(normalized, goodToneHits[0]).snippet,
-            matchText: goodToneHits[0]
+        if (preferredHits.length >= 8) {
+          addPoints("tone", 9, {
+            title: "Strong preferred vocabulary density detected",
+            explanation: "The source uses a credible density of terms aligned with the selected profile.",
+            snippet: findContext(normalized, preferredHits[0]).snippet,
+            matchText: preferredHits[0]
           });
-        } else if (goodToneHits.length >= 4) {
-          addPoints("tone", 6, {
-            title: "Reasonable operational tone detected",
-            explanation: "The copy shows several terms consistent with serious B2B compliance language.",
-            snippet: findContext(normalized, goodToneHits[0]).snippet,
-            matchText: goodToneHits[0]
+        } else if (preferredHits.length >= 4) {
+          addPoints("tone", 5, {
+            title: "Some preferred vocabulary detected",
+            explanation: "The source shows several profile-aligned terms.",
+            snippet: findContext(normalized, preferredHits[0]).snippet,
+            matchText: preferredHits[0]
           });
         } else if (normalized.length > 120) {
           addFinding({
             category: "tone",
             severity: "major",
-            title: "Operational tone is too weak",
-            explanation: "The copy does not strongly project verification, documentation control, shipment readiness, or risk discipline.",
-            suggestion: "Use more exact language around verification, review, documents, workflows, border risk, and shipment readiness.",
+            title: "Preferred operational vocabulary is too weak",
+            explanation: "The source does not sound enough like the selected profile.",
+            suggestion: "Use clearer operational, verification-led, and risk-aware language aligned with the style book.",
             snippet: normalized.slice(0, 240)
           });
         }
@@ -1618,30 +2180,57 @@
           addFinding({
             category: "tone",
             severity: severityByStrictness("major", strictness),
-            title: `Hype-coded language detected: “${term}”`,
-            explanation: "VeriPura copy must remain calm, serious, and commercially credible.",
-            suggestion: "Replace hype with precise, operational language.",
+            title: `Banned word detected: “${term}”`,
+            explanation: "This word weakens trust or introduces hype inconsistent with the selected profile.",
+            suggestion: "Replace it with precise, evidence-led, operational language.",
             snippet: findContext(normalized, term).snippet,
             matchText: term
           });
         });
 
-        forbiddenToneHits.forEach(term => {
+        forbiddenPersonalityHits.forEach(term => {
           addFinding({
             category: "tone",
             severity: "major",
-            title: `Off-brand personality cue detected: “${term}”`,
-            explanation: "The VeriPura brand should not feel playful, whimsical, flashy, or lifestyle-oriented.",
-            suggestion: "Reframe the line toward enterprise seriousness, process discipline, and risk reduction.",
+            title: `Forbidden personality cue detected: “${term}”`,
+            explanation: "The style book explicitly rejects this kind of tone or personality signal.",
+            suggestion: "Reframe toward calm, structured, serious, and commercially credible language.",
             snippet: findContext(normalized, term).snippet,
             matchText: term
           });
         });
 
-        if (badToneHits.length === 0 && forbiddenToneHits.length === 0 && normalized.length > 180) {
-          addPoints("tone", 6, {
-            title: "No obvious hype or off-brand personality language detected",
-            explanation: "The copy avoids obvious consumer-style hype or playful brand cues.",
+        if ((voice.punctuationRules || {}).discourageExclamation) {
+          const exclamations = (normalized.match(/!/g) || []).length;
+          if (exclamations > 1) {
+            addFinding({
+              category: "tone",
+              severity: "minor",
+              title: "Excessive exclamation usage detected",
+              explanation: "Exclamation marks are almost never appropriate in the VeriPura system.",
+              suggestion: "Remove dramatic punctuation and rely on clear structure instead.",
+              snippet: normalized.slice(0, 220)
+            });
+          }
+        }
+
+        if ((voice.punctuationRules || {}).discourageDramaticPunctuation) {
+          if (/\.{3,}|—.*—|!!+|\?\?+/.test(normalized)) {
+            addFinding({
+              category: "tone",
+              severity: "minor",
+              title: "Dramatic punctuation pattern detected",
+              explanation: "Dramatic punctuation weakens trust and introduces unnecessary theatrics.",
+              suggestion: "Use punctuation conservatively and keep sentence behavior controlled.",
+              snippet: normalized.slice(0, 220)
+            });
+          }
+        }
+
+        if (badToneHits.length === 0 && forbiddenPersonalityHits.length === 0 && normalized.length > 180) {
+          addPoints("tone", 5, {
+            title: "No obvious hype or casual-brand language detected",
+            explanation: "The source avoids common trust-damaging wording patterns.",
             snippet: normalized.slice(0, 200)
           });
         }
@@ -1651,25 +2240,17 @@
             category: "tone",
             severity: "minor",
             title: "Excessive uppercase density",
-            explanation: "Uppercase is appropriate for compact utility labels, not large reading blocks.",
-            suggestion: "Reduce uppercase usage outside of metadata, eyebrow labels, or compact UI cues.",
-            snippet: "The content contains a high number of uppercase blocks."
-          });
-        }
-
-        if (sourceContent === "social" && normalized.length > 2200) {
-          addFinding({
-            category: "tone",
-            severity: "minor",
-            title: "Social Media Post appears overly long",
-            explanation: "Social posts should stay compact and high-signal.",
-            suggestion: "Tighten the copy and reduce unnecessary framing language.",
-            snippet: normalized.slice(0, 240)
+            explanation: "Uppercase should mainly be reserved for mono labels, metadata, or compact utility cues.",
+            suggestion: "Reduce uppercase usage in reading text.",
+            snippet: "High uppercase-block count detected."
           });
         }
       }
 
       function scoreTechnical() {
+        const tech = profile.technical || {};
+        const assetRule = getAssetRule(sourceContent);
+
         if (meta.title) {
           addPoints("technical", 4, {
             title: "Page title detected",
@@ -1677,13 +2258,13 @@
             snippet: meta.title,
             matchText: meta.title
           });
-        } else {
+        } else if (tech.titleRequired) {
           addFinding({
             category: "technical",
             severity: reviewMode === "reference" ? "minor" : "major",
             title: "Missing page title",
-            explanation: "A strong title improves metadata posture and auditability.",
-            suggestion: "Use a title such as Topic | VeriPura.",
+            explanation: "A strong page title is part of professional metadata discipline.",
+            suggestion: "Use a title such as Topic | VeriPura or Topic | VeriPura — Pre-Shipment Compliance Verification.",
             snippet: "No <title> element was detected."
           });
         }
@@ -1695,31 +2276,31 @@
             snippet: meta.description,
             matchText: meta.description
           });
-        } else {
+        } else if (tech.descriptionPreferred) {
           addFinding({
             category: "technical",
             severity: "minor",
             title: "Missing meta description",
-            explanation: "A description helps executive previews and search snippets.",
-            suggestion: "Add a concise description focused on verification, documents, readiness, or risk.",
+            explanation: "A description improves social preview quality and search credibility.",
+            suggestion: "Add a concise factual summary centered on verification, compliance review, shipment readiness, or documentation control.",
             snippet: 'No meta name="description" element was detected.'
           });
         }
 
         if (meta.ogTitle || meta.ogDescription) {
           addPoints("technical", 3, {
-            title: "Open Graph metadata partially or fully present",
-            explanation: "Some social preview metadata is present.",
+            title: "Open Graph metadata present or partially present",
+            explanation: "Some social-preview metadata is available.",
             snippet: `og:title: ${meta.ogTitle || "missing"} | og:description: ${meta.ogDescription || "missing"}`
           });
-        } else {
+        } else if (tech.ogPreferred) {
           addFinding({
             category: "technical",
             severity: "minor",
             title: "Open Graph metadata not detected",
-            explanation: "This affects social preview maturity, but should not dominate the brand score.",
-            suggestion: "Add og:title and og:description where applicable.",
-            snippet: "No og:title or og:description meta tags were detected."
+            explanation: "This weakens preview maturity but should not dominate brand scoring.",
+            suggestion: "Add og:title and og:description aligned to the selected profile.",
+            snippet: "No og:title or og:description detected."
           });
         }
 
@@ -1730,66 +2311,108 @@
             snippet: meta.twitterCard,
             matchText: meta.twitterCard
           });
-        }
-
-        if (["proposal", "pilot", "partner", "one-pager", "case-study"].includes(sourceContent)
-          && containsAny(textLower, ["scope", "review", "process", "deliverable", "timeline", "verification"])) {
-          addPoints("technical", 2, {
-            title: "Operational document structure language detected",
-            explanation: "The document includes structure cues appropriate for controlled business material.",
-            snippet: normalized.slice(0, 220)
-          });
-        } else if (["proposal", "pilot", "partner", "one-pager", "case-study"].includes(sourceContent)) {
+        } else if (tech.twitterPreferred) {
           addFinding({
             category: "technical",
             severity: "minor",
-            title: "Document structure language appears light",
-            explanation: "Formal material should show process, scope, review, deliverables, or timeline framing.",
-            suggestion: "Add structure around scope, process, verification, deliverables, or timeline.",
-            snippet: normalized.slice(0, 220)
+            title: "Twitter/X card declaration not detected",
+            explanation: "Short-form preview discipline is incomplete.",
+            suggestion: "Add a twitter:card declaration where appropriate.",
+            snippet: "No twitter:card meta tag detected."
           });
         }
 
-        if (sourceContent === "deck"
-          && containsAny(textLower, ["problem", "solution", "market", "risk", "workflow", "compliance", "verification"])) {
-          addPoints("technical", 2, {
-            title: "Investor deck framing cues detected",
-            explanation: "The deck appears to include problem/solution/risk or workflow-oriented framing.",
-            snippet: normalized.slice(0, 220)
-          });
-        } else if (sourceContent === "deck") {
-          addFinding({
-            category: "technical",
-            severity: "minor",
-            title: "Deck structure lacks clear framing cues",
-            explanation: "Decks should clearly structure the problem, solution, risk posture, or operational logic.",
-            suggestion: "Add disciplined section framing around problem, solution, risk, workflow, and value.",
-            snippet: normalized.slice(0, 220)
-          });
+        if (assetRule) {
+          const requiredSignals = assetRule.requiredSignals || [];
+          const preferredSignals = assetRule.preferredSignals || [];
+
+          const requiredHits = countHits(textLower, requiredSignals);
+          const preferredHits = countHits(textLower, preferredSignals);
+
+          if (requiredSignals.length && requiredHits.length >= Math.min(requiredSignals.length, 2)) {
+            addPoints("technical", 2, {
+              title: `${labelize(sourceContent)} structure signals detected`,
+              explanation: "The source includes content signals expected for this asset type.",
+              snippet: requiredHits.slice(0, 4).join(", "),
+              matchText: requiredHits[0] || ""
+            });
+          } else if (requiredSignals.length) {
+            addFinding({
+              category: "technical",
+              severity: "minor",
+              title: `${labelize(sourceContent)} structure signals are weak`,
+              explanation: "This asset type is missing expected structural cues from the selected profile.",
+              suggestion: `Add structure and language around: ${requiredSignals.join(", ")}.`,
+              snippet: normalized.slice(0, 240)
+            });
+          }
+
+          if (preferredHits.length >= 2) {
+            addPoints("technical", 1, {
+              title: `${labelize(sourceContent)} preferred signals detected`,
+              explanation: "The source includes additional desirable cues for this asset type.",
+              snippet: preferredHits.slice(0, 4).join(", "),
+              matchText: preferredHits[0] || ""
+            });
+          }
+
+          if (assetRule.darkTitleSlidePreferred && sourceContent === "deck") {
+            if (rawSignals.includes("#0f2444") || rawSignals.includes("#1f3864")) {
+              addPoints("technical", 1, {
+                title: "Dark trust-heavy title/deck field detected",
+                explanation: "The deck shows evidence of dark trust-heavy surfaces aligned with the deck rules.",
+                snippet: "#0F2444 / #1F3864"
+              });
+            }
+          }
+
+          if (assetRule.restrainedChartsRequired && sourceContent === "deck") {
+            if (!containsAny(rawSignals, ["3d", "pie chart shadow", "chartjs-plugin-datalabels massive"])) {
+              addPoints("technical", 1, {
+                title: "No obvious over-stylized chart treatment detected",
+                explanation: "No immediate evidence of gratuitous chart theatrics was found in the source.",
+                snippet: "No obvious 3D or decorative chart signal detected."
+              });
+            }
+          }
+
+          if (assetRule.maxLength && normalized.length > assetRule.maxLength) {
+            addFinding({
+              category: "technical",
+              severity: "minor",
+              title: `${labelize(sourceContent)} appears longer than profile guidance`,
+              explanation: "The selected profile prefers a more compact asset length.",
+              suggestion: `Reduce the content to a tighter signal density under ${assetRule.maxLength} characters where practical.`,
+              snippet: `Character count: ${normalized.length}`
+            });
+          }
         }
       }
 
       function scoreAccessibility() {
+        const tech = profile.technical || {};
+        const typo = profile.typography || {};
+
         if (meta.imagesTotal > 0 && meta.altTexts.length > 0) {
-          addPoints("accessibility", 5, {
+          addPoints("accessibility", 4, {
             title: "Image alt text detected",
             explanation: "At least some images include alt text.",
             snippet: meta.altTexts.slice(0, 3).join(" | "),
-            matchText: meta.altTexts[0]
+            matchText: meta.altTexts[0] || ""
           });
-        } else if (meta.imagesTotal > 0) {
+        } else if (meta.imagesTotal > 0 && tech.altTextPreferred) {
           addFinding({
             category: "accessibility",
             severity: "minor",
-            title: "Images detected without clear alt text evidence",
-            explanation: "Alt text matters for accessibility and metadata completeness, but should not dominate overall brand scoring.",
-            suggestion: "Provide concise, factual alt text for images.",
+            title: "Images detected without clear alt-text evidence",
+            explanation: "Alt text is a credibility and accessibility requirement, especially for serious operational materials.",
+            suggestion: "Provide descriptive, useful, factual alt text.",
             snippet: `Images detected: ${meta.imagesTotal} | Alt texts detected: ${meta.altTexts.length}`
           });
         } else {
-          addPoints("accessibility", 2, {
-            title: "No image accessibility issue detected from source",
-            explanation: "No images were detected, so there is no obvious missing-alt issue in the inspected source.",
+          addPoints("accessibility", 1, {
+            title: "No image-alt issue detected from source",
+            explanation: "No images were detected in the inspected source.",
             snippet: "No images detected."
           });
         }
@@ -1797,7 +2420,7 @@
         if (hasReadableSentenceMix(normalized)) {
           addPoints("accessibility", 3, {
             title: "Readable sentence pattern detected",
-            explanation: "The copy is not excessively dense at the sentence level.",
+            explanation: "The source does not appear excessively dense at the sentence level.",
             snippet: normalized.slice(0, 220)
           });
         } else {
@@ -1805,8 +2428,8 @@
             category: "accessibility",
             severity: "minor",
             title: "Readability pattern appears weak",
-            explanation: "Brand outputs should remain clear and scannable.",
-            suggestion: "Use shorter sentences, clearer subheads, and more structured blocks of copy.",
+            explanation: "The style system requires clear, scannable, serious communication.",
+            suggestion: "Use shorter sentences, clearer subheads, and more structured blocks of text.",
             snippet: normalized.slice(0, 240)
           });
         }
@@ -1814,18 +2437,42 @@
         if (normalized.length >= 140) {
           addPoints("accessibility", 2, {
             title: "Input length is sufficient for a meaningful audit",
-            explanation: "The input is long enough to support a more reliable reading.",
+            explanation: "There is enough content to perform a more reliable reading.",
             snippet: `Character count: ${normalized.length}`
           });
         } else {
           addFinding({
             category: "accessibility",
             severity: "minor",
-            title: "Insufficient content for a strong brand audit",
-            explanation: "Very short inputs reduce the reliability of identity and tone scoring.",
+            title: "Insufficient content for a strong audit",
+            explanation: "Very short inputs reduce the reliability of scoring and profile matching.",
             suggestion: "Provide more text, metadata, CTA labels, or source content.",
             snippet: normalized || "No text extracted."
           });
+        }
+
+        if (typo.paragraphMonoForbidden) {
+          const longMonoIndicators = (normalized.match(/[A-Z0-9\-_]{20,}/g) || []).length;
+          if (longMonoIndicators > 6) {
+            addFinding({
+              category: "accessibility",
+              severity: "minor",
+              title: "Possible overuse of dense system-style text",
+              explanation: "The style system discourages long, dense, utility-like reading passages.",
+              suggestion: "Keep DM Mono for compact labels, metadata, and status cues rather than long reading blocks.",
+              snippet: normalized.slice(0, 220)
+            });
+          }
+        }
+
+        if ((profile.technical || {}).linkRecognizabilityRequired) {
+          if (meta.links.length > 0) {
+            addPoints("accessibility", 1, {
+              title: "Link-bearing content detected",
+              explanation: "The source includes link text, which is a basic indicator of navigational structure.",
+              snippet: meta.links.slice(0, 4).join(", ")
+            });
+          }
         }
       }
 
@@ -1854,17 +2501,28 @@
       let finalScore = Math.round(brandMatch * 0.65 + executionQuality * 0.35);
 
       if (reviewMode === "candidate") {
-        if (identityPct < 20) addCap("Very weak VeriPura identity proof", 55);
-        else if (identityPct < 40) addCap("Weak VeriPura identity proof", 70);
-        else if (identityPct < 60) addCap("Moderate but incomplete VeriPura identity proof", 82);
+        for (const rule of (profile.scoreCaps?.candidate || [])) {
+          if (identityPct <= rule.maxIdentityPct) {
+            addCap(rule.reason, rule.cap);
+            break;
+          }
+        }
       } else {
         if (identityPct < 20 && brandMatch < 35) {
-          addWarning("This was marked as a reference asset, but the extracted source shows very weak identity signals. The fetch may be incomplete or the source may not actually be a VeriPura baseline.");
+          addWarning("This was marked as a reference asset, but extracted identity signals are weak. The fetch may be incomplete or the source may not actually reflect a strong reference state.");
         }
       }
 
       if (state.mode === "website" && state.sourceMeta.fetchMode && state.sourceMeta.fetchMode !== "direct-fetch") {
-        addWarning(`Website source was retrieved via ${state.sourceMeta.fetchMode}. Partial HTML may reduce accuracy, especially for metadata and style detection.`);
+        addWarning(`Website source was retrieved via ${state.sourceMeta.fetchMode}. Partial HTML may reduce accuracy for metadata, font, and palette detection.`);
+      }
+
+      if (profile.meta?.profileName === "Investor Reference" && state.sourceName && /veripura\.com(\/)?$/i.test(state.sourceName.replace(/^https?:\/\//i, "").replace(/^www\./i, ""))) {
+        addWarning("You are auditing veripura.com against the Investor Reference profile. That site is treated as an approved pilot-sales variant, not the primary investor baseline.");
+      }
+
+      if (profile.meta?.profileName === "Pilot Campaign Variant" && state.sourceName && /investors\.veripura\.com/i.test(state.sourceName)) {
+        addWarning("You are auditing investors.veripura.com against the Pilot Campaign Variant profile. This is valid, but the investor profile is the stronger baseline for that asset.");
       }
 
       if (caps.length) {
@@ -1880,22 +2538,14 @@
         finalScore >= 60 ? "Partial Match" :
         "Weak Match";
 
-      const categoryRows = {
-        identity: identityPct,
-        system: systemPct,
-        tone: tonePct,
-        technical: technicalPct,
-        accessibility: accessibilityPct
-      };
-
-      const allItems = [...positives, ...findings];
-
       state.audit = {
         summary: {
           title: sourceTitle,
           sourceContent,
           strictness,
           reviewMode,
+          profileName: profile.meta?.profileName || labelize(els.targetProfile.value),
+          profileReference: profile.meta?.referenceLabel || "",
           source: state.sourceName || "Pasted content",
           finalScore,
           brandMatch,
@@ -1906,9 +2556,16 @@
           caps,
           warnings,
           categories,
-          categoryPercents: categoryRows
+          categoryPercents: {
+            identity: identityPct,
+            system: systemPct,
+            tone: tonePct,
+            technical: technicalPct,
+            accessibility: accessibilityPct
+          }
         },
-        items: allItems,
+        profile,
+        items: [...positives, ...findings],
         positives,
         findings,
         normalizedText: normalized
@@ -1993,6 +2650,10 @@
 
             <div class="score-mini-grid">
               <div class="score-mini">
+                <span class="k">Profile</span>
+                <span class="v">${escapeHtml(summary.profileName)}</span>
+              </div>
+              <div class="score-mini">
                 <span class="k">Brand Match</span>
                 <span class="v">${summary.brandMatch}</span>
               </div>
@@ -2032,11 +2693,14 @@
             <div class="result-card">
               <div class="result-head">
                 <div>
-                  <h3>Score Controls</h3>
-                  <p>Caps and audit warnings explain why a clean-looking page may still score low as VeriPura brand material.</p>
+                  <h3>Profile and Score Controls</h3>
+                  <p>Caps and warnings explain why a clean page may still score poorly against the selected profile.</p>
                 </div>
               </div>
               <div class="result-body">
+                <div class="mini-title">Selected Profile</div>
+                <div class="snippet">${escapeHtml(summary.profileName)} — ${escapeHtml(summary.profileReference)}</div>
+                <div style="height:12px"></div>
                 <div class="mini-title">Caps</div>
                 <div class="snippet">${capHtml}</div>
                 <div style="height:12px"></div>
@@ -2049,16 +2713,16 @@
               <div class="result-head">
                 <div>
                   <h3>Manual Review Checklist</h3>
-                  <p>These remain human-review items even after a strong result.</p>
+                  <p>These remain human-review items even after a strong score.</p>
                 </div>
               </div>
               <div class="result-body">
                 <ul class="clean">
-                  <li>Confirm actual rendered font usage, not just imported font references.</li>
-                  <li>Confirm real palette application in the live rendered page.</li>
-                  <li>Confirm logo spacing, contrast, and approved color handling.</li>
-                  <li>Confirm imagery and portrait direction are serious and enterprise-appropriate.</li>
-                  <li>Confirm fetched website HTML was complete enough for fair evaluation.</li>
+                  <li>Confirm actual rendered font use, not just imported font references.</li>
+                  <li>Confirm Gold is acting as an accent rather than visually dominating the page.</li>
+                  <li>Confirm logo treatment matches one of the approved states and has enough clear space.</li>
+                  <li>Confirm live spacing, contrast, and motion behavior on rendered dark and light surfaces.</li>
+                  <li>Confirm website HTML fetch was complete enough to fairly judge metadata and system styling.</li>
                 </ul>
               </div>
             </div>
@@ -2081,9 +2745,7 @@
       const findingsResults = document.getElementById("findingsResults");
 
       if (filterStatusBox && findingsResults) {
-        const jumpToFindings = () => {
-          findingsResults.scrollIntoView({ behavior: "smooth", block: "start" });
-        };
+        const jumpToFindings = () => findingsResults.scrollIntoView({ behavior: "smooth", block: "start" });
         filterStatusBox.addEventListener("click", jumpToFindings);
         filterStatusBox.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -2105,6 +2767,8 @@
         `**Source Content:** ${labelize(summary.sourceContent)}`,
         `**Strictness:** ${labelize(summary.strictness)}`,
         `**Review Lens:** ${labelize(summary.reviewMode)}`,
+        `**Profile:** ${summary.profileName}`,
+        `**Profile Reference:** ${summary.profileReference}`,
         `**Source:** ${summary.source}`,
         `**Final Score:** ${summary.finalScore}`,
         `**Brand Match:** ${summary.brandMatch}`,
@@ -2173,10 +2837,11 @@
       lines.push(
         "## Manual Review Items",
         "",
-        "- Confirm actual rendered font usage rather than just imported font references.",
-        "- Confirm live palette usage and CTA styling on the rendered page.",
+        "- Confirm actual rendered font usage rather than imported font references alone.",
+        "- Confirm live palette usage and that Gold remains an accent rather than a field color.",
+        "- Confirm logo handling, clear space, and approved treatment manually.",
         "- Confirm fetched website HTML was complete enough for fair evaluation.",
-        "- Confirm logo spacing, contrast, and imagery treatment manually."
+        "- Confirm live motion and spacing behavior manually."
       );
 
       return lines.join("\n");
@@ -2245,6 +2910,8 @@ th{background:#EBF3FA}
     <strong>Source Content:</strong> ${escapeHtml(labelize(summary.sourceContent))}<br>
     <strong>Strictness:</strong> ${escapeHtml(labelize(summary.strictness))}<br>
     <strong>Review Lens:</strong> ${escapeHtml(labelize(summary.reviewMode))}<br>
+    <strong>Profile:</strong> ${escapeHtml(summary.profileName)}<br>
+    <strong>Profile Reference:</strong> ${escapeHtml(summary.profileReference)}<br>
     <strong>Source:</strong> ${escapeHtml(summary.source)}<br>
     <strong>Final Score:</strong> ${summary.finalScore}<br>
     <strong>Brand Match:</strong> ${summary.brandMatch}<br>
@@ -2274,13 +2941,14 @@ th{background:#EBF3FA}
 
   <h2>Manual Review Items</h2>
   <ul>
-    <li>Confirm actual rendered font usage rather than just imported font references.</li>
-    <li>Confirm live palette usage and CTA styling on the rendered page.</li>
-    <li>Confirm fetched website HTML was complete enough for fair evaluation.</li>
-    <li>Confirm logo spacing, contrast, and imagery treatment manually.</li>
+    <li>Confirm actual rendered font usage rather than imported font references alone.</li>
+    <li>Confirm Gold remains an accent rather than a field color.</li>
+    <li>Confirm logo handling, clear space, and approved treatment manually.</li>
+    <li>Confirm fetched HTML was complete enough for fair evaluation.</li>
+    <li>Confirm live motion and spacing behavior manually.</li>
   </ul>
 
-  <p class="small">Generated by the VeriPura Brand Auditor.</p>
+  <p class="small">Generated by the VeriPura Brand Auditor — Profile-Aware Edition.</p>
 </body>
 </html>`;
     }
@@ -2323,6 +2991,15 @@ th{background:#EBF3FA}
       }
     }
 
+    async function copyProfileJson() {
+      try {
+        await navigator.clipboard.writeText(els.profileEditor.value);
+        showStatus("Active profile JSON copied to clipboard.", "success");
+      } catch {
+        showStatus("Clipboard copy failed in this environment.", "warning");
+      }
+    }
+
     async function runAudit() {
       try {
         clearStatus();
@@ -2355,7 +3032,9 @@ th{background:#EBF3FA}
           docType: els.docType.value,
           strictness: els.strictness.value,
           reviewMode: els.reviewMode.value,
+          targetProfile: els.targetProfile.value,
           benchmark: els.benchmark.value,
+          profileEditor: els.profileEditor.value,
           audit: state.audit,
           sourceName: state.sourceName
         };
@@ -2370,12 +3049,17 @@ th{background:#EBF3FA}
         const data = JSON.parse(raw);
 
         if (data.mode) setMode(data.mode);
+        if (data.targetProfile && BRAND_PROFILES[data.targetProfile]) {
+          els.targetProfile.value = data.targetProfile;
+          refreshProfileEditor();
+        }
+        if (data.profileEditor) els.profileEditor.value = data.profileEditor;
+        if (data.reviewMode) els.reviewMode.value = data.reviewMode;
         if (data.title) els.titleInput.value = data.title;
         if (data.text) els.textInput.value = data.text;
         if (data.url) els.urlInput.value = data.url;
         if (data.docType) els.docType.value = data.docType;
         if (data.strictness) els.strictness.value = data.strictness;
-        if (data.reviewMode) els.reviewMode.value = data.reviewMode;
         if (data.benchmark) els.benchmark.value = data.benchmark;
         if (data.sourceName) state.sourceName = data.sourceName;
 
@@ -2418,6 +3102,7 @@ th{background:#EBF3FA}
       if (!pdfjs) console.warn("pdfjsLib did not load; PDF parsing will be unavailable.");
       if (!window.mammoth) console.warn("Mammoth did not load; DOCX parsing will be unavailable.");
 
+      refreshProfileEditor();
       updateDiagnostics();
       updateSummary();
 
@@ -2427,6 +3112,20 @@ th{background:#EBF3FA}
         setMode(btn.dataset.mode);
         saveLastAudit();
       });
+
+      els.targetProfile.addEventListener("change", () => {
+        refreshProfileEditor();
+        updateSummary();
+        saveLastAudit();
+      });
+
+      els.resetProfileBtn.addEventListener("click", () => {
+        refreshProfileEditor();
+        showStatus("Active profile reset to the selected preset.", "success");
+        saveLastAudit();
+      });
+
+      els.copyProfileBtn.addEventListener("click", copyProfileJson);
 
       els.fileInput.addEventListener("change", async e => {
         const file = e.target.files?.[0];
@@ -2452,6 +3151,7 @@ th{background:#EBF3FA}
       els.titleInput.addEventListener("input", saveLastAudit);
       els.textInput.addEventListener("input", saveLastAudit);
       els.urlInput.addEventListener("input", saveLastAudit);
+      els.profileEditor.addEventListener("input", saveLastAudit);
 
       els.analyzeBtn.addEventListener("click", runAudit);
       els.clearBtn.addEventListener("click", clearAll);
